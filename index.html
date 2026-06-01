@@ -43,7 +43,7 @@
   --gold:   #c9a84c;
   --gold2:  #a8873a;
   --border: #c8c4bb;
-  --cell:   36px;
+  --cell:   40px;
   --r:      3px;
 }
 @media (prefers-color-scheme: dark) {
@@ -229,6 +229,13 @@ main {
   overflow-x: auto;
   max-width: 100%;
 }
+/* The grid-center wrapper centres only the cell columns.
+   Row clues float left via negative offset so they don't affect centring. */
+.grid-center {
+  display: inline-flex;
+  justify-content: center;
+  position: relative;
+}
 .nonogram-table {
   border-collapse: collapse;
   user-select: none;
@@ -240,9 +247,11 @@ main {
 }
 
 /* Clues */
+/* Row clues — pulled left of grid via negative margin so they
+   don't offset the centred cell columns */
 .clue-h {
   text-align: right;
-  padding: 4px 14px 4px 8px;
+  padding: 4px 10px 4px 0;
   font-size: 13px;
   color: var(--ink2);
   vertical-align: middle;
@@ -250,6 +259,9 @@ main {
   line-height: 1.6;
   letter-spacing: .02em;
   transition: color .15s;
+  /* Pull row clues left without consuming layout space */
+  width: 1px;
+  white-space: nowrap;
 }
 .clue-v {
   width: var(--cell);
@@ -378,11 +390,7 @@ main {
 /* ═══════════════════════════════════════════
    LEADERBOARD
 ═══════════════════════════════════════════ */
-.leaderboard-section {
-  width: 100%;
-  max-width: 480px;
-  margin-bottom: 48px;
-}
+.leaderboard-section { width: 100%; }
 .section-title {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -547,25 +555,45 @@ main {
 .win-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 
 /* ═══════════════════════════════════════════
-   COFFEE BUTTON
+   GAME LAYOUT — puzzle left, leaderboard right
+═══════════════════════════════════════════ */
+.game-layout {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 960px;
+}
+.game-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.lb-col {
+  flex: 1;
+  min-width: 220px;
+  max-width: 300px;
+  padding-top: 4px;
+}
+@media (max-width: 780px) {
+  .game-layout { flex-direction: column; align-items: center; }
+  .lb-col { max-width: 100%; width: 100%; }
+}
+
+/* ═══════════════════════════════════════════
+   COFFEE BUTTON — gold
 ═══════════════════════════════════════════ */
 .coffee-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: .05em;
-  padding: 8px 14px;
-  background: var(--paper2);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  color: var(--ink3);
-  text-decoration: none;
-  transition: all .15s;
-  z-index: 40;
+  position: fixed; bottom: 72px; right: 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: .05em; padding: 8px 14px;
+  background: var(--gold); border: 1.5px solid var(--gold);
+  border-radius: 20px; color: var(--paper);
+  text-decoration: none; transition: all .15s; z-index: 40;
 }
-.coffee-btn:hover { background: var(--paper3); color: var(--ink); border-color: var(--ink3); }
+.coffee-btn:hover { background: var(--gold2); border-color: var(--gold2); }
 
 /* ═══════════════════════════════════════════
    FOOTER
@@ -590,7 +618,7 @@ footer a:hover { color: var(--ink); }
    RESPONSIVE
 ═══════════════════════════════════════════ */
 @media (max-width: 500px) {
-  :root { --cell: 30px; }
+  :root { --cell: 32px; }
   nav { padding: 0 16px; }
   .nav-links { gap: 12px; }
   .stats-row { gap: 20px; }
@@ -624,8 +652,8 @@ footer a:hover { color: var(--ink); }
 
   <!-- SIZE TABS -->
   <div class="size-tabs">
-    <button class="size-tab active" data-size="5">5×5</button>
-    <button class="size-tab" data-size="10">10×10</button>
+    <button class="size-tab" data-size="5">5×5</button>
+    <button class="size-tab active" data-size="10">10×10</button>
     <button class="size-tab" data-size="15">15×15</button>
     <button class="size-tab" data-size="20">20×20</button>
   </div>
@@ -640,81 +668,93 @@ footer a:hover { color: var(--ink); }
   <!-- HINT -->
   <div id="hint">Loading today's puzzle…</div>
 
-  <!-- PUZZLE AREA -->
-  <div class="puzzle-area">
-    <div class="puzzle-wrap" id="puzzle-wrap"></div>
-  </div>
+  <!-- TWO-COLUMN GAME LAYOUT -->
+  <div class="game-layout">
 
-  <!-- MODE TOOLBAR -->
-  <div class="mode-toolbar">
-    <button class="mode-btn active" data-mode="fill" title="Fill · click again for ×, again to clear">
-      <div class="mode-icon">
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--ink)"/>
-        </svg>
-      </div>
-      <span class="mode-label">Fill</span>
-    </button>
-    <button class="mode-btn" data-mode="mark" title="Mark cell as empty (×)">
-      <div class="mode-icon">
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
-          <line x1="6" y1="6" x2="14" y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
-          <line x1="14" y1="6" x2="6"  y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <span class="mode-label">Mark</span>
-    </button>
-    <button class="mode-btn" data-mode="note" title="Pencil note — unsure cells">
-      <div class="mode-icon">
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
-          <circle cx="6"  cy="7"  r="1.4" fill="var(--ink3)"/>
-          <circle cx="10" cy="7"  r="1.4" fill="var(--ink3)"/>
-          <circle cx="14" cy="7"  r="1.4" fill="var(--ink3)"/>
-          <circle cx="6"  cy="11" r="1.4" fill="var(--ink3)"/>
-          <circle cx="10" cy="11" r="1.4" fill="var(--ink3)"/>
-          <circle cx="14" cy="11" r="1.4" fill="var(--ink3)"/>
-          <circle cx="6"  cy="15" r="1.4" fill="var(--ink3)"/>
-          <circle cx="10" cy="15" r="1.4" fill="var(--ink3)"/>
-          <circle cx="14" cy="15" r="1.4" fill="var(--ink3)"/>
-        </svg>
-      </div>
-      <span class="mode-label">Note</span>
-    </button>
-    <button class="mode-btn" data-mode="erase" title="Erase / clear cell">
-      <div class="mode-icon">
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper)" stroke="var(--border)" stroke-width="1.5"/>
-          <path d="M6 10 L10 6 L14 10 L10 14 Z" fill="none" stroke="var(--ink3)" stroke-width="1.5" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <span class="mode-label">Erase</span>
-    </button>
-  </div>
+    <!-- LEFT: puzzle + controls -->
+    <div class="game-col">
 
-  <!-- GAME CONTROLS -->
-  <div class="game-controls">
-    <button class="btn" id="btn-reset">↺ Reset</button>
-    <button class="btn" id="btn-giveup">Give Up</button>
-  </div>
+      <!-- PUZZLE AREA -->
+      <div class="puzzle-area">
+        <div class="puzzle-wrap" id="puzzle-wrap"></div>
+      </div>
 
-  <!-- COUNTDOWN TO NEXT PUZZLE -->
-  <div class="countdown-wrap" id="countdown-wrap">
-    Next puzzle in
-    <strong id="countdown-val">—</strong>
-  </div>
+      <!-- MODE TOOLBAR -->
+      <div class="mode-toolbar">
+        <button class="mode-btn active" data-mode="fill" title="Fill · click again for ×, again to clear">
+          <div class="mode-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--ink)"/>
+            </svg>
+          </div>
+          <span class="mode-label">Fill</span>
+        </button>
+        <button class="mode-btn" data-mode="mark" title="Mark cell as empty (×)">
+          <div class="mode-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
+              <line x1="6" y1="6" x2="14" y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="14" y1="6" x2="6"  y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="mode-label">Mark</span>
+        </button>
+        <button class="mode-btn" data-mode="note" title="Pencil note — unsure cells">
+          <div class="mode-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
+              <circle cx="6"  cy="7"  r="1.4" fill="var(--ink3)"/>
+              <circle cx="10" cy="7"  r="1.4" fill="var(--ink3)"/>
+              <circle cx="14" cy="7"  r="1.4" fill="var(--ink3)"/>
+              <circle cx="6"  cy="11" r="1.4" fill="var(--ink3)"/>
+              <circle cx="10" cy="11" r="1.4" fill="var(--ink3)"/>
+              <circle cx="14" cy="11" r="1.4" fill="var(--ink3)"/>
+              <circle cx="6"  cy="15" r="1.4" fill="var(--ink3)"/>
+              <circle cx="10" cy="15" r="1.4" fill="var(--ink3)"/>
+              <circle cx="14" cy="15" r="1.4" fill="var(--ink3)"/>
+            </svg>
+          </div>
+          <span class="mode-label">Note</span>
+        </button>
+        <button class="mode-btn" data-mode="erase" title="Erase / clear cell">
+          <div class="mode-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper)" stroke="var(--border)" stroke-width="1.5"/>
+              <path d="M6 10 L10 6 L14 10 L10 14 Z" fill="none" stroke="var(--ink3)" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="mode-label">Erase</span>
+        </button>
+      </div>
 
-  <!-- LEADERBOARD -->
-  <div class="leaderboard-section">
-    <div class="section-title">
-      Leaderboard
-      <span class="date-label" id="lb-date-label"></span>
+      <!-- GAME CONTROLS -->
+      <div class="game-controls">
+        <button class="btn" id="btn-reset">↺ Reset</button>
+        <button class="btn" id="btn-giveup">Give Up</button>
+      </div>
+
+      <!-- COUNTDOWN -->
+      <div class="countdown-wrap" id="countdown-wrap">
+        Next puzzle in
+        <strong id="countdown-val">—</strong>
+      </div>
+
     </div>
-    <div id="lb-content">
-      <div class="lb-loading">Loading…</div>
+
+    <!-- RIGHT: leaderboard -->
+    <div class="lb-col">
+      <div class="leaderboard-section">
+        <div class="section-title">
+          Leaderboard
+          <span class="date-label" id="lb-date-label"></span>
+        </div>
+        <div id="lb-content">
+          <div class="lb-loading">Loading…</div>
+        </div>
+      </div>
     </div>
-  </div>
+
+  </div><!-- end game-layout -->
 
   <!-- HOW TO PLAY -->
   <div class="how-to-section">
@@ -771,7 +811,7 @@ footer a:hover { color: var(--ink); }
 
     <div class="win-bottom-row">
       <button class="btn btn-gold" id="btn-share-win">↗ Share</button>
-      <button class="btn" id="btn-close-win">Continue</button>
+      <button class="btn" id="btn-close-win">Other size</button>
       <a href="play.html" class="btn">Play more</a>
     </div>
 
@@ -1070,10 +1110,13 @@ function render() {
     table.appendChild(tr);
   }
 
-  const gridWrap = document.createElement('div');
-  gridWrap.className = 'grid-wrap';
-  gridWrap.appendChild(table);
-  wrap.appendChild(gridWrap);
+  const gw = document.createElement('div');
+  gw.className = 'grid-wrap';
+  gw.appendChild(table);
+  const gc = document.createElement('div');
+  gc.className = 'grid-center';
+  gc.appendChild(gw);
+  wrap.appendChild(gc);
   refreshAll();
 }
 
@@ -1497,7 +1540,7 @@ setInterval(updateCountdown, 1000);
    BOOT
 ═══════════════════════════════════════════ */
 populateCountries();
-initSize(5);
+initSize(10);
 </script>
 </body>
 </html>
