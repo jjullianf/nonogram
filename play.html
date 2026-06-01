@@ -41,6 +41,9 @@
   --cell:   40px;
   --r:      3px;
 }
+@media (max-width: 600px) {
+  :root { --cell: clamp(24px, 7.5vw, 36px); }
+}
 @media (prefers-color-scheme: dark) {
   :root {
     --ink:    #f0ede6;
