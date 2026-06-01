@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Nonogram.ch</title>
+<meta name="description" content="About nonogram.ch — a free daily Nonogram and Picross puzzle site. FAQ, privacy policy, and impressum.">
+<link rel="canonical" href="https://nonogram.ch/about.html">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Google Analytics placeholder -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #1a1a1a;
+  --ink2:   #3a3a3a;
+  --ink3:   #6a6a6a;
+  --paper:  #f8f6f1;
+  --paper2: #edeae3;
+  --paper3: #e0dcd3;
+  --gold:   #c9a84c;
+  --gold2:  #a8873a;
+  --border: #c8c4bb;
+  --r:      3px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink:    #f0ede6;
+    --ink2:   #c8c4bb;
+    --ink3:   #8a8880;
+    --paper:  #1a1916;
+    --paper2: #222119;
+    --paper3: #2c2b23;
+    --border: #3a3830;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* NAV */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 52px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 50;
+}
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 20px; list-style: none; }
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  text-decoration: none;
+  transition: color .12s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--gold); }
+
+/* MAIN */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 16px 80px;
+}
+
+/* PAGE HEADER */
+.page-header { text-align: center; margin-bottom: 48px; }
+.page-badge {
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 8px;
+  display: block;
+}
+.page-header h1 {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(15px, 3vw, 18px);
+  font-weight: 400;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* CONTENT */
+.content {
+  width: 100%;
+  max-width: 560px;
+}
+
+/* SECTIONS */
+.section {
+  margin-bottom: 48px;
+}
+.section-label {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section p {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.85;
+  margin-bottom: 12px;
+}
+.section p:last-child { margin-bottom: 0; }
+.section a { color: var(--gold); text-decoration: none; }
+.section a:hover { color: var(--gold2); text-decoration: underline; }
+
+/* SUPPORT CARD */
+.support-card {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px 28px;
+  text-align: center;
+  margin-bottom: 48px;
+}
+.support-card p {
+  font-size: 12px;
+  color: var(--ink3);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.support-card a.btn {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 9px 20px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r);
+  text-decoration: none;
+  transition: all .12s;
+}
+.support-card a.btn:hover { background: var(--ink2); }
+
+/* FAQ */
+.faq-item {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.faq-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.faq-q {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+  letter-spacing: .01em;
+}
+.faq-a {
+  font-size: 13px;
+  color: var(--ink3);
+  line-height: 1.8;
+}
+.faq-a a { color: var(--gold); text-decoration: none; }
+.faq-a a:hover { text-decoration: underline; }
+
+/* AFFILIATE LINK */
+.book-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 18px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background .12s;
+  margin-top: 14px;
+}
+.book-link:hover { background: var(--paper2); }
+.book-icon { font-size: 28px; flex-shrink: 0; }
+.book-text { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+.book-text strong { display: block; color: var(--ink); margin-bottom: 2px; font-size: 13px; }
+
+/* IMPRESSUM / PRIVACY */
+.meta-text {
+  font-size: 12px;
+  color: var(--ink3);
+  line-height: 1.85;
+}
+.meta-text a { color: var(--gold); text-decoration: none; }
+
+/* COFFEE BUTTON */
+.coffee-btn {
+  position: fixed; bottom: 20px; right: 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: .05em; padding: 8px 14px;
+  background: var(--paper2); border: 1.5px solid var(--border);
+  border-radius: 20px; color: var(--ink3);
+  text-decoration: none; transition: all .15s; z-index: 40;
+}
+.coffee-btn:hover { background: var(--paper3); color: var(--ink); border-color: var(--ink3); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 28px;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 12px;
+  font-size: 11px; color: var(--ink3); letter-spacing: .04em;
+}
+footer a { color: var(--ink3); text-decoration: none; }
+footer a:hover { color: var(--ink); }
+.footer-links { display: flex; gap: 16px; }
+
+@media (max-width: 500px) {
+  nav { padding: 0 16px; }
+  .nav-links { gap: 12px; }
+  main { padding: 36px 16px 64px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Nonogram</a>
+  <ul class="nav-links">
+    <li><a href="/">Daily</a></li>
+    <li><a href="play.html">Play</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="page-header">
+    <span class="page-badge">nonogram.ch</span>
+    <h1>About</h1>
+  </div>
+
+  <div class="content">
+
+    <!-- WHAT IS A NONOGRAM -->
+    <div class="section">
+      <div class="section-label">What is a Nonogram?</div>
+      <p>
+        A Nonogram is a logic puzzle where you fill in a grid of cells according to number clues on the side. Each number tells you how many consecutive filled cells appear in that row or column, in order — with at least one empty cell between each group. The goal is to reveal a hidden pattern using pure logic, no guessing required.
+      </p>
+      <p>
+        Nonograms go by many names — Picross, Griddlers, Hanjie, Paint by Numbers, Pic-a-Pix — but they all describe the same puzzle. The name you know usually depends on where you grew up or which game series you first encountered them in.
+        <a href="nonogram-vs-picross.html">Read more about Nonogram vs Picross and other names →</a>
+      </p>
+    </div>
+
+    <!-- HOW TO PLAY -->
+    <div class="section">
+      <div class="section-label">How to Play</div>
+      <p>
+        Each row and column has a list of numbers above or to the left of it. A clue like <strong>3 1</strong> means there is a group of 3 filled cells, then a gap, then 1 filled cell — in that order. A clue of <strong>0</strong> means the entire line is empty.
+      </p>
+      <p>
+        Start with the lines where the numbers leave very little room to move — these give you the most information earliest. Cross-reference the rows and columns you've partially solved to narrow down the rest.
+      </p>
+      <p>
+        Want a deeper breakdown of solving techniques?
+        <a href="guide.html">Read the full Nonogram strategy guide →</a>
+      </p>
+    </div>
+
+    <!-- ABOUT THIS SITE -->
+    <div class="section">
+      <div class="section-label">About this site</div>
+      <p>
+        nonogram.ch is a free daily Nonogram puzzle site built and maintained by Juulian, based in St. Gallen, Switzerland. A new puzzle is published every day at midnight. There is no app, no account, and no subscription required — just open the site and play.
+      </p>
+      <p>
+        The site is part of a small family of free logic puzzle sites. If you enjoy Nonograms you might also like <a href="https://shikaku.ch" target="_blank" rel="noopener">shikaku.ch</a>, a daily Shikaku puzzle site with a global leaderboard.
+      </p>
+    </div>
+
+    <!-- SUPPORT CARD -->
+    <div class="support-card">
+      <p>nonogram.ch is completely free and always will be.<br>If you enjoy it, a coffee goes a long way.</p>
+      <a class="btn" href="https://buymeacoffee.com/juulian" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section">
+      <div class="section-label">FAQ</div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is nonogram.ch free?</div>
+        <div class="faq-a">Yes, completely free. No account, no subscription, no ads that get in the way of playing.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Do I need to create an account?</div>
+        <div class="faq-a">No. Your progress, streak, and best times are saved automatically in your browser. Nothing is tied to an account.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">How often is a new puzzle published?</div>
+        <div class="faq-a">One new puzzle per size (5×5, 10×10, 15×15, 20×20) every day at midnight. That's four fresh puzzles every 24 hours.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What is the difference between a Nonogram and Picross?</div>
+        <div class="faq-a">Nothing — they are exactly the same puzzle. Picross is the name Nintendo uses for their series; Nonogram is the more common name for the puzzle type in general. <a href="nonogram-vs-picross.html">Read the full comparison →</a></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is there a mobile app?</div>
+        <div class="faq-a">No app needed — the site works directly in your mobile browser. Just open nonogram.ch and add it to your home screen for a near-app experience.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Can I play past puzzles?</div>
+        <div class="faq-a">Not currently. The <a href="play.html">unlimited play page</a> lets you generate as many fresh puzzles as you like in any size.</div>
+      </div>
+    </div>
+
+    <!-- BOOK LINK -->
+    <div class="section">
+      <div class="section-label">If you enjoy Nonograms on paper</div>
+      <p>There is something satisfying about solving these with a pencil. Here is a well-rated book if you want to take it offline:</p>
+      <a class="book-link" href="https://amzn.to/4dSYoTF" target="_blank" rel="noopener sponsored">
+        <div class="book-icon">📖</div>
+        <div class="book-text">
+          <strong>Nonogram Puzzle Book — 200 Puzzles</strong>
+          View on Amazon →
+        </div>
+      </a>
+      <p style="font-size:11px;color:var(--ink3);margin-top:8px;">As an Amazon Associate, nonogram.ch earns a small commission from qualifying purchases at no extra cost to you.</p>
+    </div>
+
+    <!-- IMPRESSUM -->
+    <div class="section" id="impressum">
+      <div class="section-label">Impressum</div>
+      <p class="meta-text">
+        Juulian<br>
+        St. Gallen, Switzerland<br>
+        <a href="mailto:juulian@gmail.com">juulian@gmail.com</a>
+      </p>
+    </div>
+
+    <!-- PRIVACY -->
+    <div class="section" id="privacy">
+      <div class="section-label">Privacy Policy</div>
+      <p class="meta-text">
+        nonogram.ch uses <strong>Google Analytics</strong> to understand how visitors use the site (pages visited, time on site, country). This data is anonymised and aggregated — no personally identifiable information is collected.
+      </p>
+      <p class="meta-text">
+        The site uses <strong>Google AdSense</strong> to display advertisements. AdSense may use cookies to serve ads based on your prior visits to this or other websites. You can opt out of personalised advertising at <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener">google.com/settings/ads</a>.
+      </p>
+      <p class="meta-text">
+        Your puzzle progress, streak, and best times are stored in your browser's <strong>localStorage</strong>. This data never leaves your device and is not transmitted to any server.
+      </p>
+      <p class="meta-text">
+        Leaderboard submissions (name, country, and solve time) are stored in a database to power the public leaderboard. No email address or account is required, and submissions are voluntary.
+      </p>
+      <p class="meta-text">
+        This site contains <strong>affiliate links</strong> to Amazon. If you purchase a product through one of these links, nonogram.ch may earn a small commission at no extra cost to you.
+      </p>
+      <p class="meta-text">
+        For questions about your data, contact <a href="mailto:juulian@gmail.com">juulian@gmail.com</a>.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<a class="coffee-btn" href="https://buymeacoffee.com/juulian" target="_blank" rel="noopener">☕ Support</a>
+
+<footer>
+  <span>© 2026 nonogram.ch</span>
+  <div class="footer-links">
+    <a href="about.html#impressum">Impressum</a>
+    <a href="about.html#privacy">Privacy</a>
+    <a href="nonogram-vs-picross.html">Nonogram vs Picross</a>
+    <a href="guide.html">Strategy Guide</a>
+  </div>
+</footer>
+
+</body>
+</html>

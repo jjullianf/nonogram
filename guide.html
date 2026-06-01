@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonogram Strategy Guide — How to Solve Picross Puzzles</title>
+<meta name="description" content="Learn how to solve Nonogram and Picross puzzles with this complete strategy guide. Covers basic rules, overlap technique, contradiction method, and advanced tactics.">
+<meta name="keywords" content="nonogram strategy, how to solve nonogram, picross guide, nonogram tips, nonogram techniques, picross strategy, nonogram tutorial, how to play picross">
+<meta property="og:title" content="Nonogram Strategy Guide — How to Solve Picross Puzzles">
+<meta property="og:description" content="A complete guide to solving Nonogram and Picross puzzles — from basic rules to advanced techniques.">
+<meta property="og:url" content="https://nonogram.ch/guide.html">
+<link rel="canonical" href="https://nonogram.ch/guide.html">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Google Analytics placeholder -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #1a1a1a;
+  --ink2:   #3a3a3a;
+  --ink3:   #6a6a6a;
+  --paper:  #f8f6f1;
+  --paper2: #edeae3;
+  --paper3: #e0dcd3;
+  --gold:   #c9a84c;
+  --gold2:  #a8873a;
+  --border: #c8c4bb;
+  --r:      3px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink:    #f0ede6;
+    --ink2:   #c8c4bb;
+    --ink3:   #8a8880;
+    --paper:  #1a1916;
+    --paper2: #222119;
+    --paper3: #2c2b23;
+    --border: #3a3830;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; height: 52px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--paper); z-index: 50;
+}
+.nav-logo {
+  font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 400;
+  color: var(--ink); text-decoration: none; letter-spacing: .06em; text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 20px; list-style: none; }
+.nav-links a {
+  font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink3); text-decoration: none; transition: color .12s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--gold); }
+
+/* MAIN */
+main {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; padding: 48px 16px 80px;
+}
+
+/* HEADER */
+.page-header { text-align: center; margin-bottom: 48px; }
+.page-badge {
+  display: block; font-size: 10px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink3); margin-bottom: 8px;
+}
+.page-header h1 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 400; letter-spacing: -.01em; margin-bottom: 8px;
+}
+.page-header .sub { font-size: 12px; color: var(--ink3); letter-spacing: .03em; }
+
+/* CONTENT */
+.content { width: 100%; max-width: 600px; }
+
+/* TABLE OF CONTENTS */
+.toc {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 48px;
+  background: var(--paper2);
+}
+.toc-title {
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 12px;
+}
+.toc ol { padding-left: 18px; }
+.toc li { font-size: 12px; color: var(--ink2); margin-bottom: 6px; line-height: 1.5; }
+.toc a { color: var(--ink2); text-decoration: none; }
+.toc a:hover { color: var(--gold); }
+
+/* SECTIONS */
+.section { margin-bottom: 52px; }
+.section-label {
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section h2 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 20px; font-weight: 400; letter-spacing: -.01em;
+  color: var(--ink); margin-bottom: 14px;
+}
+.section h3 {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; font-weight: 500;
+  letter-spacing: .02em; color: var(--ink);
+  margin-bottom: 8px; margin-top: 24px;
+}
+.section p {
+  font-size: 13px; color: var(--ink2);
+  line-height: 1.9; margin-bottom: 14px;
+}
+.section p:last-child { margin-bottom: 0; }
+.section a { color: var(--gold); text-decoration: none; }
+.section a:hover { text-decoration: underline; }
+.section ul, .section ol {
+  padding-left: 20px; margin-bottom: 14px;
+}
+.section li {
+  font-size: 13px; color: var(--ink2);
+  line-height: 1.85; margin-bottom: 6px;
+}
+
+/* GRID EXAMPLES */
+.grid-example {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  line-height: 2;
+  letter-spacing: .08em;
+  overflow-x: auto;
+}
+.grid-example .filled { color: var(--ink); font-weight: 500; }
+.grid-example .empty  { color: var(--ink3); }
+.grid-example .unknown { color: var(--border); }
+.grid-example .clue   { color: var(--gold); }
+
+/* DIFFICULTY TABLE */
+.diff-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12px; margin: 16px 0;
+}
+.diff-table th {
+  text-align: left; padding: 8px 12px;
+  font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink3); border-bottom: 1px solid var(--border);
+}
+.diff-table td {
+  padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--ink2);
+}
+.diff-table tr:last-child td { border-bottom: none; }
+.diff-table .size-col { font-weight: 500; color: var(--ink); }
+
+/* CALLOUT */
+.callout {
+  border-left: 3px solid var(--gold);
+  padding: 12px 16px;
+  margin: 16px 0;
+  background: var(--paper2);
+  border-radius: 0 4px 4px 0;
+}
+.callout p { font-size: 12px; color: var(--ink3); margin-bottom: 0; line-height: 1.7; }
+
+/* BOOK LINK */
+.book-link {
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid var(--border); border-radius: 4px;
+  padding: 16px 18px; text-decoration: none; color: var(--ink);
+  transition: background .12s; margin-top: 14px;
+}
+.book-link:hover { background: var(--paper2); }
+.book-icon { font-size: 28px; flex-shrink: 0; }
+.book-text { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+.book-text strong { display: block; color: var(--ink); margin-bottom: 2px; font-size: 13px; }
+
+/* COFFEE */
+.coffee-btn {
+  position: fixed; bottom: 20px; right: 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: .05em; padding: 8px 14px;
+  background: var(--paper2); border: 1.5px solid var(--border);
+  border-radius: 20px; color: var(--ink3);
+  text-decoration: none; transition: all .15s; z-index: 40;
+}
+.coffee-btn:hover { background: var(--paper3); color: var(--ink); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border); padding: 20px 28px;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 12px;
+  font-size: 11px; color: var(--ink3); letter-spacing: .04em;
+}
+footer a { color: var(--ink3); text-decoration: none; }
+footer a:hover { color: var(--ink); }
+.footer-links { display: flex; gap: 16px; }
+
+@media (max-width: 500px) {
+  nav { padding: 0 16px; }
+  .nav-links { gap: 12px; }
+  main { padding: 36px 16px 64px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Nonogram</a>
+  <ul class="nav-links">
+    <li><a href="/">Daily</a></li>
+    <li><a href="play.html">Play</a></li>
+    <li><a href="guide.html" class="active">Guide</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="page-header">
+    <span class="page-badge">Strategy Guide</span>
+    <h1>How to Solve Nonograms</h1>
+    <p class="sub">From first cell to finished puzzle — a complete Picross guide</p>
+  </div>
+
+  <div class="content">
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc">
+      <div class="toc-title">Contents</div>
+      <ol>
+        <li><a href="#what-is">What is a Nonogram / Picross?</a></li>
+        <li><a href="#rules">The basic rules</a></li>
+        <li><a href="#forced">Technique 1 — Forced cells</a></li>
+        <li><a href="#overlap">Technique 2 — Overlap analysis</a></li>
+        <li><a href="#elimination">Technique 3 — Elimination</a></li>
+        <li><a href="#cross">Technique 4 — Cross-referencing rows and columns</a></li>
+        <li><a href="#advanced">Advanced techniques</a></li>
+        <li><a href="#difficulty">Difficulty levels compared</a></li>
+        <li><a href="#mistakes">Common mistakes</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. WHAT IS -->
+    <div class="section" id="what-is">
+      <div class="section-label">Section 1</div>
+      <h2>What is a Nonogram / Picross?</h2>
+      <p>
+        A Nonogram — also called Picross, Griddlers, Hanjie, or Paint by Numbers — is a grid-based logic puzzle. Your goal is to determine which cells in the grid should be filled and which should remain empty, using only the number clues provided along each row and column.
+      </p>
+      <p>
+        When solved correctly, the filled cells form a pattern — sometimes a recognisable image, sometimes an abstract shape. The puzzle has exactly one valid solution, reachable through pure logic. No guessing is ever required.
+      </p>
+      <p>
+        Nonograms were invented independently in Japan and the UK in the late 1980s. Nintendo popularised them globally under the name Picross. Today they are one of the most-played logic puzzle formats in the world, alongside Sudoku and crosswords.
+      </p>
+      <div class="callout">
+        <p>Nonogram, Picross, Griddlers, Hanjie, Paint by Numbers, Pic-a-Pix — all the same puzzle, different names. <a href="nonogram-vs-picross.html">Read the full comparison →</a></p>
+      </div>
+    </div>
+
+    <!-- 2. RULES -->
+    <div class="section" id="rules">
+      <div class="section-label">Section 2</div>
+      <h2>The Basic Rules</h2>
+      <p>
+        Each cell in the grid is either <strong>filled</strong> or <strong>empty</strong>. The clues along the top of each column and the left of each row tell you exactly how many consecutive filled cells appear in that line.
+      </p>
+      <ul>
+        <li>A clue of <strong>3</strong> means exactly three consecutive filled cells somewhere in that line.</li>
+        <li>A clue of <strong>2 1</strong> means a group of two filled cells, then at least one empty cell, then one filled cell — in that exact order.</li>
+        <li>A clue of <strong>0</strong> means the entire line is empty.</li>
+        <li>There must be <strong>at least one empty cell</strong> between each group.</li>
+        <li>Groups must appear in the order listed — you cannot reverse them.</li>
+      </ul>
+      <div class="grid-example">
+        <span class="clue">Clue: 3</span><br>
+        <span class="empty">· · </span><span class="filled">■ ■ ■</span><span class="empty"> · · ·</span>   ✓ valid<br>
+        <span class="filled">■ ■ ■</span><span class="empty"> · · · · ·</span>   ✓ valid<br>
+        <span class="filled">■ ■</span><span class="empty"> · </span><span class="filled">■</span><span class="empty"> · · · ·</span>   ✗ wrong — that's clue 2 1
+      </div>
+      <p>
+        Row clues are read left to right. Column clues are read top to bottom. Both must be satisfied simultaneously — this is what makes the puzzle solvable by logic alone.
+      </p>
+    </div>
+
+    <!-- 3. FORCED CELLS -->
+    <div class="section" id="forced">
+      <div class="section-label">Section 3</div>
+      <h2>Technique 1 — Forced Cells</h2>
+      <p>
+        The first technique to learn is also the most powerful: identifying cells that <em>must</em> be filled regardless of where the clue group is placed.
+      </p>
+      <p>
+        Consider a line of 5 cells with a clue of <strong>5</strong>. There is only one valid solution — all five cells are filled. This is the simplest case: the entire line is forced.
+      </p>
+      <p>
+        Now consider a line of 5 cells with a clue of <strong>4</strong>. The group of four can start at position 1 or position 2. In both valid placements, cells 2 through 4 are always filled. That gives you three certain cells immediately, even without knowing the exact position of the group.
+      </p>
+      <div class="grid-example">
+        <span class="clue">Clue: 4, line length: 5</span><br>
+        Placement A:  <span class="filled">■ ■ ■ ■</span><span class="empty"> ·</span><br>
+        Placement B:  <span class="empty">· </span><span class="filled">■ ■ ■ ■</span><br>
+        Overlap:      <span class="unknown">? </span><span class="filled">■ ■ ■</span><span class="unknown"> ?</span>   ← always filled
+      </div>
+      <p>
+        The formula is simple: if a clue group has length <em>k</em> and the line has length <em>n</em>, the overlap is <em>k − (n − k)</em> = <em>2k − n</em> cells. Any positive overlap means forced cells in the middle. This is the first thing you should check on every line.
+      </p>
+    </div>
+
+    <!-- 4. OVERLAP -->
+    <div class="section" id="overlap">
+      <div class="section-label">Section 4</div>
+      <h2>Technique 2 — Overlap Analysis</h2>
+      <p>
+        Overlap analysis extends forced cells to lines with multiple clue groups. For each group individually, find the leftmost possible position and the rightmost possible position. Any cells that are filled in both extremes are confirmed filled.
+      </p>
+
+      <h3>The leftmost and rightmost pass</h3>
+      <p>
+        To find the leftmost packing, place each group as far left as possible with exactly one empty cell between groups. To find the rightmost packing, do the same starting from the right. Compare the two: wherever both packings agree a cell is filled, mark it.
+      </p>
+      <div class="grid-example">
+        <span class="clue">Clue: 3 2, line length: 8</span><br>
+        Leftmost:   <span class="filled">■ ■ ■</span><span class="empty"> · </span><span class="filled">■ ■</span><span class="empty"> · ·</span><br>
+        Rightmost:  <span class="empty">· · </span><span class="filled">■ ■ ■</span><span class="empty"> · </span><span class="filled">■ ■</span><br>
+        Overlap:    <span class="unknown">? ? </span><span class="filled">■</span><span class="unknown"> ? ? ? </span><span class="filled">■</span>   ← confirmed
+      </div>
+      <p>
+        On longer lines with large clue groups, this technique can confirm a significant portion of the line in one pass. Always run this check before moving to more complex techniques.
+      </p>
+    </div>
+
+    <!-- 5. ELIMINATION -->
+    <div class="section" id="elimination">
+      <div class="section-label">Section 5</div>
+      <h2>Technique 3 — Elimination</h2>
+      <p>
+        Just as important as finding confirmed filled cells is identifying confirmed <em>empty</em> cells. Once you know where a cell cannot belong to any clue group, you can mark it empty.
+      </p>
+      <p>
+        The most common case: if a segment of the line is too short to fit the smallest remaining clue group, every cell in that segment must be empty. For example, if your remaining clue is <strong>3</strong> and there is only a gap of 2 cells before the next known empty cell, that gap cannot contain the group — mark it empty.
+      </p>
+      <p>
+        Marking empty cells is as valuable as marking filled ones. Each confirmed empty cell splits the line into smaller segments, which in turn makes overlap analysis more precise for the remaining unknowns.
+      </p>
+
+      <h3>Using marked cells to constrain groups</h3>
+      <p>
+        Once you have some filled cells confirmed, you can also work backwards. If you know a group of 3 is somewhere in a segment and one end of that segment already has two confirmed filled cells, the third must be the adjacent cell — or the two filled cells belong to a different part of the group. Tighten each constraint as new information arrives.
+      </p>
+    </div>
+
+    <!-- 6. CROSS-REFERENCING -->
+    <div class="section" id="cross">
+      <div class="section-label">Section 6</div>
+      <h2>Technique 4 — Cross-Referencing Rows and Columns</h2>
+      <p>
+        No line exists in isolation. Every cell is at the intersection of a row and a column, and progress in one feeds directly into the other. This cross-referencing loop is the engine of nonogram solving.
+      </p>
+      <p>
+        The recommended workflow is to iterate in passes:
+      </p>
+      <ol>
+        <li>Apply overlap analysis to every row. Mark any confirmed filled or empty cells.</li>
+        <li>Apply overlap analysis to every column, now using the cells you just marked as constraints.</li>
+        <li>Repeat, alternating between rows and columns, until no further progress is possible in one full pass.</li>
+      </ol>
+      <p>
+        On well-constructed puzzles — like those on nonogram.ch, which are verified to have a unique logical solution — this iterative approach is sufficient to solve the entire puzzle without guessing. Each pass reveals more information, which unlocks further deductions in the next pass.
+      </p>
+      <div class="callout">
+        <p><strong>Tip:</strong> Start with the rows and columns that have the largest clue groups relative to the line length. They yield the most overlap and give you the most confirmed cells per minute of work.</p>
+      </div>
+    </div>
+
+    <!-- 7. ADVANCED -->
+    <div class="section" id="advanced">
+      <div class="section-label">Section 7</div>
+      <h2>Advanced Techniques</h2>
+
+      <h3>Edge constraints</h3>
+      <p>
+        If a line begins with a filled cell, that cell must belong to the first clue group. You immediately know the group starts at position 1, which pins its right edge and may confirm empty cells after it. The same logic applies to filled cells at the end of a line — they belong to the last clue group.
+      </p>
+
+      <h3>Completed group marking</h3>
+      <p>
+        Once you have confirmed all cells of a clue group — for example, you have three consecutive filled cells and the clue is exactly 3 — mark the cells immediately before and after the group as empty. This prevents the group from accidentally merging with adjacent unknowns in future passes.
+      </p>
+
+      <h3>Segment analysis</h3>
+      <p>
+        Once a line has some confirmed empty cells, it breaks into independent segments. Treat each segment as its own mini-puzzle: figure out which clue groups can fit in which segment. If a clue group is too large to fit anywhere except one segment, it belongs there — and you can apply overlap analysis within just that segment.
+      </p>
+
+      <h3>Contradiction method</h3>
+      <p>
+        When no straightforward technique yields progress, try assuming a cell is filled and following the logical consequences. If a contradiction arises — a line becomes unsolvable — then the opposite must be true: the cell is empty. This is a last resort on hard puzzles and rarely needed on 10×10 grids, but it is the standard technique for Expert (20×20) puzzles where the clue density is lower.
+      </p>
+    </div>
+
+    <!-- 8. DIFFICULTY -->
+    <div class="section" id="difficulty">
+      <div class="section-label">Section 8</div>
+      <h2>Difficulty Levels Compared</h2>
+      <p>
+        nonogram.ch offers four grid sizes, each with a different challenge level. Here is what to expect from each:
+      </p>
+      <table class="diff-table">
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th>Name</th>
+            <th>Techniques needed</th>
+            <th>Avg. solve time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="size-col">5×5</td>
+            <td>Starter</td>
+            <td>Forced cells only</td>
+            <td>1–2 min</td>
+          </tr>
+          <tr>
+            <td class="size-col">10×10</td>
+            <td>Classic</td>
+            <td>Overlap + cross-referencing</td>
+            <td>5–10 min</td>
+          </tr>
+          <tr>
+            <td class="size-col">15×15</td>
+            <td>Hard</td>
+            <td>All standard techniques</td>
+            <td>15–25 min</td>
+          </tr>
+          <tr>
+            <td class="size-col">20×20</td>
+            <td>Expert</td>
+            <td>Standard + segment analysis</td>
+            <td>30–60 min</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        If you are new to Nonograms, start with the 5×5 daily puzzle to get a feel for the mechanics. Move to 10×10 once forced cells feel natural. The Classic size is where most players spend the majority of their time — it is large enough to feel satisfying but short enough to finish in a single sitting.
+      </p>
+    </div>
+
+    <!-- 9. MISTAKES -->
+    <div class="section" id="mistakes">
+      <div class="section-label">Section 9</div>
+      <h2>Common Mistakes</h2>
+
+      <h3>Guessing instead of deducing</h3>
+      <p>
+        The most common mistake beginners make is filling in a cell because it "looks right" rather than because logic forces it. Guessing creates cascading errors that are hard to untangle. If you cannot deduce a cell with certainty, move to a different line and come back later.
+      </p>
+
+      <h3>Forgetting the order of clue groups</h3>
+      <p>
+        Clue groups must appear left-to-right (rows) and top-to-bottom (columns) in the exact order listed. A clue of <strong>2 3</strong> cannot have the group of 3 appear before the group of 2. This is a simple rule that is easy to overlook when you are focused on a different part of the puzzle.
+      </p>
+
+      <h3>Not marking empty cells</h3>
+      <p>
+        Many solvers only mark filled cells and leave unknowns blank. This makes it harder to see which segments remain and easy to accidentally fill a cell that should be empty. Use the × mark (or Note mode) liberally — confirmed empty cells are just as valuable as confirmed filled ones.
+      </p>
+
+      <h3>Ignoring small clue groups</h3>
+      <p>
+        It is tempting to focus on large clue groups because they yield the most overlap. But small groups — especially isolated 1s at the edge of a line — often pin the position of the entire line once you know which segment they belong to. Check small groups too.
+      </p>
+
+      <h3>Solving rows only</h3>
+      <p>
+        Some beginners work through all the rows first and then attempt the columns. This misses the cross-referencing benefit. Alternate between rows and columns in passes — each pass with new information yields more progress than a second pass on stale data.
+      </p>
+
+      <div class="callout">
+        <p>Ready to practise? <a href="/">Play today's daily Nonogram →</a> or <a href="play.html">try unlimited puzzles in any size →</a></p>
+      </div>
+    </div>
+
+    <!-- BOOK -->
+    <div class="section">
+      <div class="section-label">Want to practise on paper?</div>
+      <p>If you prefer solving with a pencil, this well-rated puzzle book is a great companion:</p>
+      <a class="book-link" href="https://amzn.to/4dSYoTF" target="_blank" rel="noopener sponsored">
+        <div class="book-icon">📖</div>
+        <div class="book-text">
+          <strong>Nonogram Puzzle Book — 200 Puzzles</strong>
+          View on Amazon →
+        </div>
+      </a>
+      <p style="font-size:11px;color:var(--ink3);margin-top:8px;">As an Amazon Associate, nonogram.ch earns a small commission from qualifying purchases at no extra cost to you.</p>
+    </div>
+
+  </div>
+</main>
+
+<a class="coffee-btn" href="https://buymeacoffee.com/juulian" target="_blank" rel="noopener">☕ Support</a>
+
+<footer>
+  <span>© 2026 nonogram.ch</span>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="about.html#privacy">Privacy</a>
+    <a href="nonogram-vs-picross.html">Nonogram vs Picross</a>
+    <a href="guide.html">Strategy Guide</a>
+  </div>
+</footer>
+
+</body>
+</html>

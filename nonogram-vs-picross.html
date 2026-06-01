@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonogram vs Picross — What's the Difference?</title>
+<meta name="description" content="Nonogram and Picross are the same puzzle — just different names. Learn about all the names for this logic puzzle: Griddlers, Hanjie, Paint by Numbers, Pic-a-Pix and more.">
+<meta name="keywords" content="nonogram vs picross, nonogram picross difference, what is picross, what is nonogram, griddlers hanjie, paint by numbers puzzle, pic-a-pix, nonogram game online, picross alternative">
+<meta property="og:title" content="Nonogram vs Picross — What's the Difference?">
+<meta property="og:description" content="Nonogram and Picross are exactly the same puzzle. Here is why they have different names and what each one means.">
+<meta property="og:url" content="https://nonogram.ch/nonogram-vs-picross.html">
+<link rel="canonical" href="https://nonogram.ch/nonogram-vs-picross.html">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Google Analytics placeholder -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #1a1a1a;
+  --ink2:   #3a3a3a;
+  --ink3:   #6a6a6a;
+  --paper:  #f8f6f1;
+  --paper2: #edeae3;
+  --paper3: #e0dcd3;
+  --gold:   #c9a84c;
+  --gold2:  #a8873a;
+  --border: #c8c4bb;
+  --r:      3px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink:    #f0ede6;
+    --ink2:   #c8c4bb;
+    --ink3:   #8a8880;
+    --paper:  #1a1916;
+    --paper2: #222119;
+    --paper3: #2c2b23;
+    --border: #3a3830;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Mono', monospace; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; height: 52px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--paper); z-index: 50;
+}
+.nav-logo { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 400; color: var(--ink); text-decoration: none; letter-spacing: .06em; text-transform: uppercase; }
+.nav-links { display: flex; gap: 20px; list-style: none; }
+.nav-links a { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); text-decoration: none; transition: color .12s; }
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--gold); }
+
+main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 48px 16px 80px; }
+
+.page-header { text-align: center; margin-bottom: 48px; }
+.page-badge { display: block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+.page-header h1 { font-family: 'Noto Serif JP', serif; font-size: clamp(20px, 4vw, 28px); font-weight: 400; letter-spacing: -.01em; margin-bottom: 8px; }
+.page-header .sub { font-size: 12px; color: var(--ink3); letter-spacing: .03em; }
+
+.content { width: 100%; max-width: 600px; }
+
+.section { margin-bottom: 48px; }
+.section-label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.section h2 { font-family: 'Noto Serif JP', serif; font-size: 20px; font-weight: 400; letter-spacing: -.01em; color: var(--ink); margin-bottom: 14px; }
+.section p { font-size: 13px; color: var(--ink2); line-height: 1.9; margin-bottom: 14px; }
+.section p:last-child { margin-bottom: 0; }
+.section a { color: var(--gold); text-decoration: none; }
+.section a:hover { text-decoration: underline; }
+.section ul { padding-left: 20px; margin-bottom: 14px; }
+.section li { font-size: 13px; color: var(--ink2); line-height: 1.85; margin-bottom: 6px; }
+
+/* Names table */
+.names-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 16px 0 0; }
+.names-table th { text-align: left; padding: 8px 12px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); border-bottom: 1px solid var(--border); }
+.names-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--ink2); line-height: 1.6; }
+.names-table tr:last-child td { border-bottom: none; }
+.names-table .name-col { font-weight: 500; color: var(--ink); white-space: nowrap; }
+
+/* Callout */
+.callout { border-left: 3px solid var(--gold); padding: 12px 16px; margin: 16px 0; background: var(--paper2); border-radius: 0 4px 4px 0; }
+.callout p { font-size: 12px; color: var(--ink3); margin-bottom: 0; line-height: 1.7; }
+
+/* CTA card */
+.cta-card { border: 1px solid var(--border); border-radius: 4px; padding: 28px; text-align: center; }
+.cta-card p { font-size: 13px; color: var(--ink3); line-height: 1.7; margin-bottom: 18px; }
+.cta-card .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.cta-card a {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .07em;
+  text-transform: uppercase; padding: 9px 20px;
+  border: 1.5px solid var(--border); background: var(--paper2); color: var(--ink);
+  border-radius: var(--r); text-decoration: none; transition: all .12s;
+}
+.cta-card a:hover { background: var(--paper3); border-color: var(--ink3); }
+.cta-card a.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.cta-card a.primary:hover { background: var(--ink2); }
+
+.coffee-btn { position: fixed; bottom: 20px; right: 20px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .05em; padding: 8px 14px; background: var(--paper2); border: 1.5px solid var(--border); border-radius: 20px; color: var(--ink3); text-decoration: none; transition: all .15s; z-index: 40; }
+.coffee-btn:hover { background: var(--paper3); color: var(--ink); }
+
+footer { border-top: 1px solid var(--border); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--ink3); letter-spacing: .04em; }
+footer a { color: var(--ink3); text-decoration: none; }
+footer a:hover { color: var(--ink); }
+.footer-links { display: flex; gap: 16px; }
+
+@media (max-width: 500px) { nav { padding: 0 16px; } .nav-links { gap: 12px; } main { padding: 36px 16px 64px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Nonogram</a>
+  <ul class="nav-links">
+    <li><a href="/">Daily</a></li>
+    <li><a href="play.html">Play</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <span class="page-badge">Comparison</span>
+    <h1>Nonogram vs Picross</h1>
+    <p class="sub">Same puzzle, many names — here is the full story</p>
+  </div>
+
+  <div class="content">
+
+    <div class="section">
+      <div class="section-label">The short answer</div>
+      <h2>They are the same puzzle</h2>
+      <p>
+        Nonogram and Picross describe exactly the same type of logic puzzle. You fill in a grid using number clues along each row and column to reveal a hidden pattern. The rules, mechanics, and solving techniques are identical — the only difference is the name.
+      </p>
+      <p>
+        The name you use usually depends on where you grew up or which version of the puzzle you encountered first. In Japan and among Nintendo fans, it is called Picross. In Europe and in puzzle books, it is more commonly called Nonogram or Griddlers. Online it tends to be called Nonogram because that is the more searchable generic term.
+      </p>
+      <div class="callout">
+        <p>All of these names refer to the same puzzle: Nonogram · Picross · Griddlers · Hanjie · Paint by Numbers · Pic-a-Pix · Oekaki · Logimage</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">All the names</div>
+      <h2>Why so many names?</h2>
+      <p>
+        The puzzle was invented independently in Japan and the UK in the late 1980s. Because there was no single originator, different publishers and regions coined their own names. Here is a breakdown of every name you might encounter:
+      </p>
+      <table class="names-table">
+        <thead>
+          <tr><th>Name</th><th>Origin</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name-col">Nonogram</td>
+            <td>UK, 1990</td>
+            <td>Coined by Non Ishida, who published the first puzzles in the Sunday Telegraph. The most widely used generic name today.</td>
+          </tr>
+          <tr>
+            <td class="name-col">Picross</td>
+            <td>Nintendo, 1995</td>
+            <td>Short for "Picture Crossword." Nintendo's branded name for their hugely popular Game Boy series. Still the dominant name among video game players.</td>
+          </tr>
+          <tr>
+            <td class="name-col">Griddlers</td>
+            <td>International</td>
+            <td>Used primarily by the griddlers.net community and in printed puzzle books. Popular in Eastern Europe.</td>
+          </tr>
+          <tr>
+            <td class="name-col">Hanjie</td>
+            <td>UK puzzle press</td>
+            <td>Used by several UK puzzle magazines. Same puzzle, no mechanical differences.</td>
+          </tr>
+          <tr>
+            <td class="name-col">Paint by Numbers</td>
+            <td>USA</td>
+            <td>Used by Games magazine in the early 1990s. Sometimes confused with the children's colouring activity of the same name.</td>
+          </tr>
+          <tr>
+            <td class="name-col">Pic-a-Pix</td>
+            <td>Conceptis Puzzles</td>
+            <td>The branded name used by Conceptis, one of the largest puzzle syndication companies. Identical puzzle.</td>
+          </tr>
+          <tr>
+            <td class="name-col">Oekaki</td>
+            <td>Japan</td>
+            <td>Japanese for "drawing" or "sketch." Used in some Japanese puzzle publications alongside Picross.</td>
+          </tr>
+          <tr>
+            <td class="name-col">Logimage</td>
+            <td>France</td>
+            <td>The French name, used in French puzzle magazines. Logic + image.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Nintendo Picross</div>
+      <h2>Picross vs free online Nonograms</h2>
+      <p>
+        Nintendo's Picross series — including Picross DS, Picross S, and Picross e — are polished, paid games with hundreds of handcrafted puzzles, smooth controls, and progressive difficulty. If you play on a Nintendo console, Picross S on Switch is the gold standard.
+      </p>
+      <p>
+        Free online Nonogram sites like nonogram.ch offer the same core puzzle without the cost or hardware requirement. The tradeoff is that browser-based puzzles vary in quality — some sites do not verify that puzzles have a unique logical solution, which means some puzzles require guessing.
+      </p>
+      <p>
+        Every puzzle on nonogram.ch is algorithmically verified to have a unique solution reachable by logic alone — no guessing ever required. A new puzzle is published in four sizes every day, with a global leaderboard.
+      </p>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Nonogram vs Sudoku</div>
+      <h2>How does it compare to Sudoku?</h2>
+      <p>
+        Both Nonograms and Sudoku are pure logic puzzles with a unique solution, solvable without guessing. The key differences:
+      </p>
+      <ul>
+        <li><strong>Visual output:</strong> Nonograms produce a picture when solved. Sudoku produces a completed number grid.</li>
+        <li><strong>Learning curve:</strong> Nonograms are generally considered easier to learn. The rules are simpler and the first techniques are more intuitive.</li>
+        <li><strong>Scalability:</strong> Nonograms scale in two dimensions (grid size). A 5×5 is genuinely easy; a 20×20 is genuinely hard. Sudoku is always 9×9.</li>
+        <li><strong>Solving style:</strong> Sudoku solving often involves tracking candidates across multiple cells simultaneously. Nonogram solving is more sequential — you work line by line and build up certainty progressively.</li>
+      </ul>
+      <p>
+        If you enjoy Sudoku, you will almost certainly enjoy Nonograms. Many players find Nonograms more satisfying because the solved grid reveals something visual.
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-card">
+      <p>Ready to play? A new free Nonogram puzzle is available every day — no app, no account needed.</p>
+      <div class="btn-row">
+        <a class="primary" href="/">Play today's puzzle</a>
+        <a href="play.html">Unlimited play</a>
+        <a href="guide.html">Strategy guide</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<a class="coffee-btn" href="https://buymeacoffee.com/juulian" target="_blank" rel="noopener">☕ Support</a>
+
+<footer>
+  <span>© 2026 nonogram.ch</span>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="about.html#privacy">Privacy</a>
+    <a href="nonogram-vs-picross.html">Nonogram vs Picross</a>
+    <a href="guide.html">Strategy Guide</a>
+  </div>
+</footer>
+
+</body>
+</html>

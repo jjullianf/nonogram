@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonogram Game — Free Online Picross Puzzle</title>
+<meta name="description" content="Play unlimited free Nonogram and Picross puzzles online. Choose your size — 5×5, 10×10, 15×15 or 20×20. No app, no login needed.">
+<meta name="keywords" content="nonogram game, picross game, nonogram online, free nonogram, picross online, nonogram puzzle">
+<meta property="og:title" content="Nonogram Game — Free Online Picross">
+<meta property="og:description" content="Unlimited free Nonogram puzzles in four sizes. Play online, no app needed.">
+<meta property="og:image" content="https://nonogram.ch/preview.png">
+<meta property="og:url" content="https://nonogram.ch/play.html">
+<link rel="canonical" href="https://nonogram.ch/play.html">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Google Analytics placeholder -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --ink:    #1a1a1a;
+  --ink2:   #3a3a3a;
+  --ink3:   #6a6a6a;
+  --paper:  #f8f6f1;
+  --paper2: #edeae3;
+  --paper3: #e0dcd3;
+  --gold:   #c9a84c;
+  --gold2:  #a8873a;
+  --border: #c8c4bb;
+  --cell:   36px;
+  --r:      3px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink:    #f0ede6;
+    --ink2:   #c8c4bb;
+    --ink3:   #8a8880;
+    --paper:  #1a1916;
+    --paper2: #222119;
+    --paper3: #2c2b23;
+    --border: #3a3830;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 52px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 50;
+}
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 20px; list-style: none; }
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  text-decoration: none;
+  transition: color .12s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--gold); }
+
+/* ═══════════════════════════════════════════
+   MAIN
+═══════════════════════════════════════════ */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 16px 80px;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.page-header { text-align: center; margin-bottom: 24px; }
+.page-badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 6px;
+}
+.page-header h1 {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(15px, 3vw, 18px);
+  font-weight: 400;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.page-header .sub { font-size: 11px; color: var(--ink3); letter-spacing: .03em; }
+
+/* ═══════════════════════════════════════════
+   SIZE TABS
+═══════════════════════════════════════════ */
+.size-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 20px;
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px;
+}
+.size-tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.size-tab:hover { color: var(--ink); background: var(--paper3); }
+.size-tab.active { background: var(--ink); color: var(--paper); }
+
+/* ═══════════════════════════════════════════
+   STATS ROW
+═══════════════════════════════════════════ */
+.stats-row {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 14px;
+  font-size: 10px;
+  color: var(--ink3);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.stat { text-align: center; }
+.stat strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: .02em;
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════
+   HINT
+═══════════════════════════════════════════ */
+#hint {
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: .04em;
+  margin-bottom: 10px;
+  min-height: 16px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   PUZZLE GRID
+═══════════════════════════════════════════ */
+.puzzle-wrap { overflow-x: auto; max-width: 100%; margin-bottom: 10px; }
+.nonogram-table { border-collapse: collapse; user-select: none; -webkit-user-select: none; }
+.grid-wrap { display: inline-block; padding: 12px; }
+
+.clue-h {
+  text-align: right;
+  padding: 4px 14px 4px 8px;
+  font-size: 13px;
+  color: var(--ink2);
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1.6;
+  letter-spacing: .02em;
+  transition: color .15s;
+}
+.clue-v {
+  width: var(--cell);
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink2);
+  vertical-align: bottom;
+  padding: 6px 0 8px;
+  transition: color .15s;
+}
+.clue-v-inner { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.clue-v-digit { display: block; width: 100%; text-align: center; line-height: 1.55; letter-spacing: .02em; }
+.clue-corner { min-width: 24px; }
+.clue-done { color: var(--gold) !important; }
+
+.cell {
+  width: var(--cell); height: var(--cell);
+  border: 1px solid var(--border);
+  cursor: pointer; background: var(--paper);
+  position: relative; transition: background .05s;
+}
+.cell:hover:not(.filled) { background: var(--paper2); }
+.cell.b5r { border-right:  2px solid var(--ink3) !important; }
+.cell.b5b { border-bottom: 2px solid var(--ink3) !important; }
+.cell.filled { background: var(--ink) !important; }
+.cell.filled:hover { background: var(--ink2) !important; }
+.cell.marked { background: var(--paper) !important; }
+.cell.marked::before, .cell.marked::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 50%; height: 2px; background: var(--ink3); border-radius: 1px;
+}
+.cell.marked::before { transform: translate(-50%,-50%) rotate(45deg); }
+.cell.marked::after  { transform: translate(-50%,-50%) rotate(-45deg); }
+.cell.noted { background: var(--paper2) !important; }
+.cell.noted::after {
+  content: ''; position: absolute;
+  width: 18px; height: 18px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: radial-gradient(circle, var(--ink3) 1.5px, transparent 1.5px);
+  background-size: 6px 6px;
+  background-position: 3px 3px;
+  opacity: .6;
+}
+.cell.filled.noted::after { display: none; }
+
+/* ═══════════════════════════════════════════
+   MODE TOOLBAR
+═══════════════════════════════════════════ */
+.mode-toolbar {
+  display: flex; gap: 6px; justify-content: center;
+  margin-bottom: 14px; align-items: center;
+}
+.mode-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 7px 10px; border: 1.5px solid var(--border);
+  background: var(--paper2); border-radius: var(--r);
+  cursor: pointer; transition: all .12s; min-width: 50px;
+}
+.mode-btn:hover { background: var(--paper3); border-color: var(--ink3); }
+.mode-btn.active { background: var(--paper); border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.mode-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.mode-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .05em; color: var(--ink3); text-transform: uppercase; pointer-events: none; }
+.mode-btn.active .mode-label { color: var(--ink); }
+
+/* ═══════════════════════════════════════════
+   GAME CONTROLS
+═══════════════════════════════════════════ */
+.game-controls {
+  display: flex; gap: 8px; justify-content: center;
+  margin-bottom: 32px; flex-wrap: wrap;
+}
+.btn {
+  font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .05em;
+  padding: 7px 16px; border: 1.5px solid var(--border);
+  background: var(--paper2); color: var(--ink);
+  border-radius: var(--r); cursor: pointer; transition: all .12s;
+  text-decoration: none; display: inline-block;
+}
+.btn:hover { background: var(--paper3); border-color: var(--ink3); }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.primary:hover { background: var(--ink2); }
+.btn.btn-gold { background: var(--gold); color: var(--paper); border-color: var(--gold); }
+.btn.btn-gold:hover { background: var(--gold2); border-color: var(--gold2); }
+
+/* ═══════════════════════════════════════════
+   BEST TIMES TABLE
+═══════════════════════════════════════════ */
+.bests-section {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 48px;
+}
+.section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.bests-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.bests-table td {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink2);
+}
+.bests-table tr:last-child td { border-bottom: none; }
+.bests-table .size-label { color: var(--ink); font-weight: 500; }
+.bests-table .best-time { text-align: right; color: var(--gold); letter-spacing: .04em; }
+.bests-table .solved-count { text-align: center; color: var(--ink3); font-size: 11px; }
+
+/* ═══════════════════════════════════════════
+   HOW TO PLAY
+═══════════════════════════════════════════ */
+.how-section { width: 100%; max-width: 400px; margin-bottom: 48px; }
+.how-section p { font-size: 13px; color: var(--ink3); line-height: 1.8; margin-bottom: 10px; }
+
+/* ═══════════════════════════════════════════
+   WIN OVERLAY
+═══════════════════════════════════════════ */
+#win-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 200;
+  align-items: center; justify-content: center;
+}
+#win-overlay.show { display: flex; }
+.win-card {
+  background: var(--paper); border: 1px solid var(--border); border-radius: 6px;
+  padding: 48px 40px 32px; text-align: center; max-width: 360px; width: 92%;
+  animation: pop .28s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop { from { transform: scale(.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.win-icon { margin-bottom: 20px; }
+.win-card h2 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 26px; font-weight: 400;
+  letter-spacing: -.01em; color: var(--ink); margin-bottom: 6px;
+}
+.win-subtitle { font-size: 12px; color: var(--ink3); letter-spacing: .04em; margin-bottom: 24px; }
+.win-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 28px; color: var(--gold);
+  font-weight: 300; letter-spacing: .06em; margin-bottom: 28px;
+}
+.win-best {
+  font-size: 11px; color: var(--ink3);
+  letter-spacing: .05em; margin-bottom: 20px;
+}
+.win-divider { width: 100%; height: 1px; background: var(--border); margin-bottom: 20px; }
+.win-bottom-row { display: flex; gap: 8px; justify-content: center; }
+.win-bottom-row .btn {
+  flex: 1; text-align: center;
+  font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 10px 6px;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   COFFEE
+═══════════════════════════════════════════ */
+.coffee-btn {
+  position: fixed; bottom: 20px; right: 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: .05em; padding: 8px 14px;
+  background: var(--paper2); border: 1.5px solid var(--border);
+  border-radius: 20px; color: var(--ink3);
+  text-decoration: none; transition: all .15s; z-index: 40;
+}
+.coffee-btn:hover { background: var(--paper3); color: var(--ink); border-color: var(--ink3); }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 28px;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 12px;
+  font-size: 11px; color: var(--ink3); letter-spacing: .04em;
+}
+footer a { color: var(--ink3); text-decoration: none; }
+footer a:hover { color: var(--ink); }
+.footer-links { display: flex; gap: 16px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 500px) {
+  :root { --cell: 30px; }
+  nav { padding: 0 16px; }
+  .nav-links { gap: 12px; }
+  .stats-row { gap: 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">Nonogram</a>
+  <ul class="nav-links">
+    <li><a href="/">Daily</a></li>
+    <li><a href="play.html" class="active">Play</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="page-header">
+    <div class="page-badge">Unlimited Play</div>
+    <h1>Nonogram</h1>
+  </div>
+
+  <!-- SIZE TABS -->
+  <div class="size-tabs">
+    <button class="size-tab" data-size="5">5×5</button>
+    <button class="size-tab active" data-size="10">10×10</button>
+    <button class="size-tab" data-size="15">15×15</button>
+    <button class="size-tab" data-size="20">20×20</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat"><strong id="timer-val">0:00</strong>Time</div>
+    <div class="stat"><strong id="best-val">—</strong>Best</div>
+    <div class="stat"><strong id="solved-val">—</strong>Solved</div>
+  </div>
+
+  <div id="hint">Loading…</div>
+
+  <!-- PUZZLE -->
+  <div class="puzzle-wrap" id="puzzle-wrap"></div>
+
+  <!-- MODE TOOLBAR -->
+  <div class="mode-toolbar">
+    <button class="mode-btn active" data-mode="fill" title="Fill · click again for ×, again to clear">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--ink)"/>
+        </svg>
+      </div>
+      <span class="mode-label">Fill</span>
+    </button>
+    <button class="mode-btn" data-mode="mark" title="Mark cell as empty (×)">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
+          <line x1="6" y1="6" x2="14" y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="6" x2="6"  y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="mode-label">Mark</span>
+    </button>
+    <button class="mode-btn" data-mode="note" title="Pencil note">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
+          <circle cx="6"  cy="7"  r="1.4" fill="var(--ink3)"/>
+          <circle cx="10" cy="7"  r="1.4" fill="var(--ink3)"/>
+          <circle cx="14" cy="7"  r="1.4" fill="var(--ink3)"/>
+          <circle cx="6"  cy="11" r="1.4" fill="var(--ink3)"/>
+          <circle cx="10" cy="11" r="1.4" fill="var(--ink3)"/>
+          <circle cx="14" cy="11" r="1.4" fill="var(--ink3)"/>
+          <circle cx="6"  cy="15" r="1.4" fill="var(--ink3)"/>
+          <circle cx="10" cy="15" r="1.4" fill="var(--ink3)"/>
+          <circle cx="14" cy="15" r="1.4" fill="var(--ink3)"/>
+        </svg>
+      </div>
+      <span class="mode-label">Note</span>
+    </button>
+    <button class="mode-btn" data-mode="erase" title="Erase cell">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper)" stroke="var(--border)" stroke-width="1.5"/>
+          <path d="M6 10 L10 6 L14 10 L10 14 Z" fill="none" stroke="var(--ink3)" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="mode-label">Erase</span>
+    </button>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="game-controls">
+    <button class="btn primary" id="btn-new">↻ New Puzzle</button>
+    <button class="btn" id="btn-reset">↺ Reset</button>
+    <button class="btn" id="btn-reveal">✓ Reveal</button>
+  </div>
+
+  <!-- HOW TO PLAY -->
+  <div class="how-section">
+    <div class="section-title">How to Play</div>
+    <p>Fill in the grid so every row and column matches its number clues. Each number tells you how many consecutive filled cells appear in that line, in order — with at least one gap between groups.</p>
+    <p><strong>Click</strong> to fill · <strong>Click again</strong> to mark × · <strong>Right-click</strong> to mark directly · <strong>Drag</strong> to paint. Use Note mode to pencil uncertain cells.</p>
+    <p>Want a daily challenge with a leaderboard? <a href="/" style="color:var(--gold)">Try the daily puzzle →</a></p>
+  </div>
+
+</main>
+
+<!-- WIN OVERLAY -->
+<div id="win-overlay">
+  <div class="win-card">
+    <div class="win-icon">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect x="16" y="2" width="19" height="19" rx="1.5" transform="rotate(45 16 2)" fill="var(--ink)" opacity=".12"/>
+        <rect x="16" y="6" width="13" height="13" rx="1" transform="rotate(45 16 6)" stroke="var(--ink)" stroke-width="1.5" fill="none"/>
+      </svg>
+    </div>
+    <h2>Solved</h2>
+    <div class="win-subtitle" id="win-subtitle">Puzzle complete</div>
+    <div class="win-time" id="win-time-display">0:00</div>
+    <div class="win-best" id="win-best"></div>
+    <div class="win-divider"></div>
+    <div class="win-bottom-row">
+      <button class="btn btn-gold" id="btn-share-win">↗ Share</button>
+      <button class="btn btn-gold" id="btn-new-win">↻ New puzzle</button>
+      <button class="btn" id="btn-close-win">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- COFFEE -->
+<a class="coffee-btn" href="https://buymeacoffee.com/juulian" target="_blank" rel="noopener">☕ Support</a>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 nonogram.ch</span>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="about.html#privacy">Privacy</a>
+    <a href="nonogram-vs-picross.html">Nonogram vs Picross</a>
+    <a href="guide.html">Guide</a>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════
+   RNG
+═══════════════════════════════════════════ */
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+/* ═══════════════════════════════════════════
+   GENERATOR + SOLVER
+═══════════════════════════════════════════ */
+function makeSolution(R, C, rng) {
+  return Array.from({length: R}, () =>
+    Array.from({length: C}, () => rng() < 0.55 ? 1 : 0)
+  );
+}
+function getClues(line) {
+  const out = []; let n = 0;
+  for (const v of line) { if (v === 1) n++; else if (n) { out.push(n); n = 0; } }
+  if (n) out.push(n);
+  return out.length ? out : [0];
+}
+function solveLine(clues, cur) {
+  const len = cur.length;
+  if (clues.length === 1 && clues[0] === 0) {
+    const r = cur.slice();
+    for (let i = 0; i < len; i++) { if (cur[i] === 1) return null; r[i] = -1; }
+    return r;
+  }
+  const af = new Array(len).fill(true), ae = new Array(len).fill(true);
+  let found = false;
+  const minLen = g => { let l = 0; for (let i = g; i < clues.length; i++) l += clues[i] + (i > g ? 1 : 0); return l; };
+  function place(g, pos, pl) {
+    if (g === clues.length) {
+      for (let i = pos; i < len; i++) { if (cur[i] === 1) return; }
+      found = true;
+      const fill = new Array(len).fill(false);
+      for (let k = 0; k < pl.length; k++) for (let j = pl[k]; j < pl[k] + clues[k]; j++) fill[j] = true;
+      for (let i = 0; i < len; i++) { if (!fill[i]) af[i] = false; if (fill[i]) ae[i] = false; }
+      return;
+    }
+    const max = len - minLen(g);
+    for (let s = pos; s <= max; s++) {
+      let ok = true;
+      for (let i = pos; i < s; i++) { if (cur[i] === 1) { ok = false; break; } }
+      if (!ok) break;
+      for (let i = s; i < s + clues[g]; i++) { if (cur[i] === -1) { ok = false; break; } }
+      if (!ok) continue;
+      if (s + clues[g] < len && cur[s + clues[g]] === 1) continue;
+      pl.push(s); place(g + 1, s + clues[g] + 1, pl); pl.pop();
+    }
+  }
+  place(0, 0, []);
+  if (!found) return null;
+  const res = cur.slice();
+  for (let i = 0; i < len; i++) {
+    if (af[i] && cur[i] !== -1) res[i] = 1;
+    if (ae[i] && cur[i] !== 1)  res[i] = -1;
+  }
+  return res;
+}
+function solveGrid(rowClues, colClues, R, C) {
+  let g = Array.from({length: R}, () => new Array(C).fill(0));
+  let ch = true, it = 0;
+  while (ch && it++ < R + C + 20) {
+    ch = false;
+    for (let r = 0; r < R; r++) {
+      const nl = solveLine(rowClues[r], g[r]); if (!nl) return null;
+      for (let c = 0; c < C; c++) { if (nl[c] !== g[r][c]) { ch = true; g[r][c] = nl[c]; } }
+    }
+    for (let c = 0; c < C; c++) {
+      const col = g.map(r2 => r2[c]), nl = solveLine(colClues[c], col); if (!nl) return null;
+      for (let r = 0; r < R; r++) { if (nl[r] !== g[r][c]) { ch = true; g[r][c] = nl[r]; } }
+    }
+  }
+  return g;
+}
+function isUnique(rC, cC, R, C) {
+  const g = solveGrid(rC, cC, R, C);
+  return g !== null && g.every(row => row.every(v => v !== 0));
+}
+function generatePuzzle(R, C, seed) {
+  const rng = mulberry32(seed);
+  for (let a = 1; a <= 300; a++) {
+    const sol = makeSolution(R, C, rng);
+    const rowClues = sol.map(r => getClues(r));
+    const colClues = Array.from({length: C}, (_, c) => getClues(sol.map(r => r[c])));
+    if (isUnique(rowClues, colClues, R, C))
+      return { R, C, rowClues, colClues, solution: sol };
+  }
+  const rng2 = mulberry32(seed);
+  const sol = makeSolution(R, C, rng2);
+  return { R, C, rowClues: sol.map(r => getClues(r)), colClues: Array.from({length: C}, (_, c) => getClues(sol.map(r => r[c]))), solution: sol };
+}
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let puzzle  = null;
+let player  = null;
+let solved  = false;
+let dragMode = null;
+let mode    = 'fill';
+let timerSec = 0, timerID = null;
+let currentSize = 10;
+// Running seed — increments each new puzzle so every "New" gives a fresh one
+let currentSeed = Date.now() & 0xFFFFFF;
+
+/* ═══════════════════════════════════════════
+   LOCALSTORAGE
+═══════════════════════════════════════════ */
+function getBest(size) {
+  try { return localStorage.getItem(`nonogram_play_best_${size}`); } catch(e) { return null; }
+}
+function setBest(size, t) {
+  try {
+    const cur = getBest(size);
+    if (!cur || t < +cur) localStorage.setItem(`nonogram_play_best_${size}`, t);
+  } catch(e) {}
+}
+function getSolvedCount(size) {
+  try { return +(localStorage.getItem(`nonogram_play_solved_${size}`) || 0); } catch(e) { return 0; }
+}
+function incrementSolved(size) {
+  try { localStorage.setItem(`nonogram_play_solved_${size}`, getSolvedCount(size) + 1); } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+function render() {
+  const wrap = document.getElementById('puzzle-wrap');
+  wrap.innerHTML = '';
+  if (!puzzle) return;
+  const { R, C, rowClues, colClues } = puzzle;
+  const maxRC = Math.max(...rowClues.map(c => c.length));
+  const maxCC = Math.max(...colClues.map(c => c.length));
+  const table = document.createElement('table');
+  table.className = 'nonogram-table';
+  // Col clue row
+  {
+    const tr = document.createElement('tr');
+    const corner = document.createElement('td');
+    corner.className = 'clue-corner'; corner.colSpan = maxRC;
+    tr.appendChild(corner);
+    for (let c = 0; c < C; c++) {
+      const td = document.createElement('td');
+      td.className = 'clue-v'; td.id = `cv-${c}`;
+      const inner = document.createElement('div');
+      inner.className = 'clue-v-inner';
+      const cl = colClues[c], pad = maxCC - cl.length;
+      for (let p = 0; p < pad; p++) { const sp = document.createElement('span'); sp.className = 'clue-v-digit'; sp.innerHTML = '&nbsp;'; inner.appendChild(sp); }
+      for (const v of cl) { const sp = document.createElement('span'); sp.className = 'clue-v-digit'; sp.textContent = v; inner.appendChild(sp); }
+      td.appendChild(inner); tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  // Game rows
+  for (let r = 0; r < R; r++) {
+    const tr = document.createElement('tr');
+    const rclue = document.createElement('td');
+    rclue.className = 'clue-h'; rclue.id = `rh-${r}`; rclue.colSpan = maxRC;
+    rclue.textContent = rowClues[r].join('\u2009\u2009');
+    tr.appendChild(rclue);
+    for (let c = 0; c < C; c++) {
+      const td = document.createElement('td');
+      td.className = 'cell'; td.dataset.r = r; td.dataset.c = c;
+      if ((c + 1) % 5 === 0 && c < C - 1) td.classList.add('b5r');
+      if ((r + 1) % 5 === 0 && r < R - 1) td.classList.add('b5b');
+      td.addEventListener('mousedown', cellDown);
+      td.addEventListener('mouseenter', cellEnter);
+      td.addEventListener('contextmenu', e => e.preventDefault());
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  const gw = document.createElement('div');
+  gw.className = 'grid-wrap';
+  gw.appendChild(table);
+  wrap.appendChild(gw);
+  refreshAll();
+}
+
+function refreshAll() {
+  if (!puzzle) return;
+  for (let r = 0; r < puzzle.R; r++)
+    for (let c = 0; c < puzzle.C; c++) refreshCell(r, c);
+  refreshClues();
+}
+function refreshCell(r, c) {
+  const td = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+  if (!td) return;
+  td.classList.remove('filled', 'marked', 'noted');
+  const v = player[r][c];
+  if (v === 1)  td.classList.add('filled');
+  if (v === -1) td.classList.add('marked');
+  if (v === 2)  td.classList.add('noted');
+}
+function refreshClues() {
+  if (!puzzle) return;
+  for (let r = 0; r < puzzle.R; r++) {
+    const el = document.getElementById(`rh-${r}`);
+    if (el) el.classList.toggle('clue-done', isRowDone(r));
+  }
+  for (let c = 0; c < puzzle.C; c++) {
+    const el = document.getElementById(`cv-${c}`);
+    if (el) el.classList.toggle('clue-done', isColDone(c));
+  }
+}
+function isRowDone(r) {
+  return JSON.stringify(getClues(player[r].map(v => v === 1 ? 1 : 0))) === JSON.stringify(puzzle.rowClues[r]);
+}
+function isColDone(c) {
+  return JSON.stringify(getClues(player.map(row => row[c] === 1 ? 1 : 0))) === JSON.stringify(puzzle.colClues[c]);
+}
+
+/* ═══════════════════════════════════════════
+   INTERACTION
+═══════════════════════════════════════════ */
+function stateForMode(cur, m) {
+  if (m === 'fill') { if (cur === 0) return 1; if (cur === 1) return -1; return 0; }
+  if (m === 'mark')  return cur === -1 ? 0 : -1;
+  if (m === 'note')  return cur === 2  ? 0 : 2;
+  if (m === 'erase') return 0;
+  return 0;
+}
+function cellDown(e) {
+  if (solved) return;
+  e.preventDefault();
+  if (!timerID) startTimer();
+  const r = +e.target.dataset.r, c = +e.target.dataset.c;
+  const cur = player[r][c];
+  let next;
+  if (e.button === 2) { next = cur === -1 ? 0 : -1; dragMode = 'rclick_' + next; }
+  else { next = stateForMode(cur, mode); dragMode = mode + '_' + next; }
+  applyTo(r, c, next); checkWin();
+}
+function cellEnter(e) {
+  if (!dragMode || solved) return;
+  const r = +e.target.dataset.r, c = +e.target.dataset.c;
+  const parts = dragMode.split('_');
+  const tv = parseInt(parts[parts.length - 1], 10);
+  if (player[r][c] !== tv) applyTo(r, c, tv);
+}
+document.addEventListener('mouseup', () => { if (dragMode) checkWin(); dragMode = null; });
+function applyTo(r, c, val) {
+  player[r][c] = val; refreshCell(r, c); refreshClues();
+}
+
+/* ═══════════════════════════════════════════
+   WIN
+═══════════════════════════════════════════ */
+function checkWin() {
+  if (solved || !puzzle) return;
+  const { R, C, solution } = puzzle;
+  for (let r = 0; r < R; r++)
+    for (let c = 0; c < C; c++)
+      if ((player[r][c] === 1 ? 1 : 0) !== solution[r][c]) return;
+  solved = true;
+  stopTimer();
+  setBest(currentSize, timerSec);
+  incrementSolved(currentSize);
+  updateStatDisplay();
+  setTimeout(() => {
+    const prev = getBest(currentSize);
+    const isNewBest = !prev || timerSec <= +prev;
+    document.getElementById('win-time-display').textContent = fmtTime(timerSec);
+    document.getElementById('win-subtitle').textContent = `${currentSize}×${currentSize} puzzle complete`;
+    document.getElementById('win-best').textContent = isNewBest ? '🏅 New personal best!' : `Best: ${fmtTime(+getBest(currentSize))}`;
+    document.getElementById('win-overlay').classList.add('show');
+  }, 180);
+}
+
+/* ═══════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════ */
+function startTimer() { if (timerID) return; timerID = setInterval(() => { timerSec++; document.getElementById('timer-val').textContent = fmtTime(timerSec); }, 1000); }
+function stopTimer()  { clearInterval(timerID); timerID = null; }
+function resetTimer() { stopTimer(); timerSec = 0; document.getElementById('timer-val').textContent = '0:00'; }
+function fmtTime(s)   { return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+
+function updateStatDisplay() {
+  const best = getBest(currentSize);
+  document.getElementById('best-val').textContent = best ? fmtTime(+best) : '—';
+  const cnt = getSolvedCount(currentSize);
+  document.getElementById('solved-val').textContent = cnt || '—';
+}
+
+/* ═══════════════════════════════════════════
+   BEST TIMES TABLE
+═══════════════════════════════════════════ */
+function renderBests() {
+  const sizes = [5, 10, 15, 20];
+  const labels = { 5: '5×5 Starter', 10: '10×10 Classic', 15: '15×15 Hard', 20: '20×20 Expert' };
+  const tbody = document.querySelector('#bests-table tbody');
+  tbody.innerHTML = sizes.map(sz => {
+    const best = getBest(sz);
+    const cnt  = getSolvedCount(sz);
+    return `<tr>
+      <td class="size-label">${labels[sz]}</td>
+      <td class="solved-count">${cnt ? `${cnt} solved` : '—'}</td>
+      <td class="best-time">${best ? fmtTime(+best) : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   GENERATE
+═══════════════════════════════════════════ */
+function newPuzzle(size) {
+  currentSize = size;
+  currentSeed = (currentSeed + 7919) & 0xFFFFFFF; // advance seed each time
+  solved = false;
+  resetTimer();
+  mode = 'fill';
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.mode-btn[data-mode="fill"]').classList.add('active');
+  document.getElementById('hint').textContent = `Generating ${size}×${size}…`;
+  document.getElementById('puzzle-wrap').innerHTML = '';
+
+  setTimeout(() => {
+    puzzle = generatePuzzle(size, size, currentSeed);
+    player = Array.from({length: size}, () => new Array(size).fill(0));
+    render();
+    updateStatDisplay();
+    document.getElementById('hint').textContent = 'Click: fill  ·  Click again: ×  ·  Right-click: × directly';
+  }, 10);
+}
+
+/* ═══════════════════════════════════════════
+   BUTTON WIRING
+═══════════════════════════════════════════ */
+document.querySelectorAll('.size-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.size-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    newPuzzle(+btn.dataset.size);
+  });
+});
+
+document.getElementById('btn-new').addEventListener('click', () => newPuzzle(currentSize));
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (!puzzle) return;
+  player = Array.from({length: puzzle.R}, () => new Array(puzzle.C).fill(0));
+  solved = false; resetTimer(); refreshAll();
+  document.getElementById('hint').textContent = 'Click: fill  ·  Click again: ×  ·  Right-click: × directly';
+});
+
+document.getElementById('btn-reveal').addEventListener('click', () => {
+  if (!puzzle) return;
+  if (!confirm('Reveal the solution?')) return;
+  player = puzzle.solution.map(r => r.slice());
+  solved = true; stopTimer(); refreshAll();
+  document.getElementById('hint').textContent = '✓ Solution revealed.';
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Share
+function doShare(btnEl, msg) {
+  navigator.clipboard.writeText(msg).then(() => {
+    btnEl.textContent = '✓ Copied!';
+    setTimeout(() => { btnEl.textContent = '↗ Share'; }, 2000);
+  }).catch(() => { prompt('Copy this:', msg); });
+}
+
+document.getElementById('btn-share-win').addEventListener('click', function() {
+  const msg = `I solved a ${currentSize}×${currentSize} Nonogram in ${fmtTime(timerSec)} 🧩\nnonogram.ch/play`;
+  doShare(this, msg);
+});
+
+document.getElementById('btn-new-win').addEventListener('click', () => {
+  document.getElementById('win-overlay').classList.remove('show');
+  newPuzzle(currentSize);
+});
+document.getElementById('btn-close-win').addEventListener('click', () => {
+  document.getElementById('win-overlay').classList.remove('show');
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+newPuzzle(10);
+</script>
+</body>
+</html>

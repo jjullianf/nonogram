@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonogram Daily Puzzle — Free Daily Picross with Leaderboard</title>
+<meta name="description" content="Play today's free Nonogram daily puzzle. A new Picross challenge every day with a global leaderboard. No app needed.">
+<meta name="keywords" content="nonogram daily, nonogram puzzle, picross daily, free nonogram online, picross puzzle, nonogram game, daily logic puzzle, paint by numbers puzzle">
+<meta property="og:title" content="Nonogram Daily Puzzle — Free Daily Picross">
+<meta property="og:description" content="A new free Nonogram / Picross puzzle every day. Solve it, beat the leaderboard.">
+<meta property="og:image" content="https://nonogram.ch/preview.png">
+<meta property="og:url" content="https://nonogram.ch/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://nonogram.ch/">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Nonogram Daily Puzzle",
+  "url": "https://nonogram.ch",
+  "description": "Free daily Nonogram and Picross puzzle with global leaderboard.",
+  "applicationCategory": "GameApplication",
+  "genre": "Puzzle"
+}
+</script>
+<!-- Google Analytics placeholder — replace G-XXXXXXXXXX -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --ink:    #1a1a1a;
+  --ink2:   #3a3a3a;
+  --ink3:   #6a6a6a;
+  --paper:  #f8f6f1;
+  --paper2: #edeae3;
+  --paper3: #e0dcd3;
+  --gold:   #c9a84c;
+  --gold2:  #a8873a;
+  --border: #c8c4bb;
+  --cell:   36px;
+  --r:      3px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink:    #f0ede6;
+    --ink2:   #c8c4bb;
+    --ink3:   #8a8880;
+    --paper:  #1a1916;
+    --paper2: #222119;
+    --paper3: #2c2b23;
+    --border: #3a3830;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ═══════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════ */
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 52px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 50;
+}
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.nav-logo span { color: var(--ink); }
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  text-decoration: none;
+  transition: color .12s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--gold); }
+
+/* ═══════════════════════════════════════════
+   MAIN LAYOUT
+═══════════════════════════════════════════ */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 16px 80px;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════════ */
+.page-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.page-badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 6px;
+}
+.page-header h1 {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(16px, 3vw, 20px);
+  font-weight: 400;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.page-header .sub {
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: .03em;
+}
+
+/* ═══════════════════════════════════════════
+   SIZE TABS (daily size selector)
+═══════════════════════════════════════════ */
+.size-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 18px;
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px;
+}
+.size-tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.size-tab:hover { color: var(--ink); background: var(--paper3); }
+.size-tab.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ═══════════════════════════════════════════
+   STATS ROW
+═══════════════════════════════════════════ */
+.stats-row {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 14px;
+  font-size: 10px;
+  color: var(--ink3);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.stat { text-align: center; }
+.stat strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: .02em;
+  line-height: 1.3;
+}
+#timer-val { color: var(--ink); }
+
+/* ═══════════════════════════════════════════
+   HINT LINE
+═══════════════════════════════════════════ */
+#hint {
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: .04em;
+  margin-bottom: 10px;
+  min-height: 16px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   PUZZLE AREA
+═══════════════════════════════════════════ */
+.puzzle-area {
+  position: relative;
+  margin-bottom: 10px;
+}
+.puzzle-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.nonogram-table {
+  border-collapse: collapse;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.grid-wrap {
+  display: inline-block;
+  padding: 12px;
+}
+
+/* Clues */
+.clue-h {
+  text-align: right;
+  padding: 4px 14px 4px 8px;
+  font-size: 13px;
+  color: var(--ink2);
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1.6;
+  letter-spacing: .02em;
+  transition: color .15s;
+}
+.clue-v {
+  width: var(--cell);
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink2);
+  vertical-align: bottom;
+  padding: 6px 0 8px;
+  transition: color .15s;
+}
+.clue-v-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.clue-v-digit { display: block; width: 100%; text-align: center; line-height: 1.55; letter-spacing: .02em; }
+.clue-corner { min-width: 24px; }
+.clue-done { color: var(--gold) !important; }
+
+/* Cells */
+.cell {
+  width: var(--cell); height: var(--cell);
+  border: 1px solid var(--border);
+  cursor: pointer; background: var(--paper);
+  position: relative; transition: background .05s;
+}
+.cell:hover:not(.filled) { background: var(--paper2); }
+.cell.b5r { border-right:  2px solid var(--ink3) !important; }
+.cell.b5b { border-bottom: 2px solid var(--ink3) !important; }
+
+.cell.filled { background: var(--ink) !important; }
+.cell.filled:hover { background: var(--ink2) !important; }
+
+.cell.marked { background: var(--paper) !important; }
+.cell.marked::before, .cell.marked::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 50%; height: 2px; background: var(--ink3); border-radius: 1px;
+}
+.cell.marked::before { transform: translate(-50%,-50%) rotate(45deg); }
+.cell.marked::after  { transform: translate(-50%,-50%) rotate(-45deg); }
+
+.cell.noted { background: var(--paper2) !important; }
+.cell.noted::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: radial-gradient(circle, var(--ink3) 1.5px, transparent 1.5px);
+  background-size: 6px 6px;
+  background-position: 3px 3px;
+  opacity: .6;
+}
+.cell.filled.noted::after { display: none; }
+
+/* ═══════════════════════════════════════════
+   GAME CONTROLS (below grid)
+═══════════════════════════════════════════ */
+.game-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Mode toolbar */
+.mode-toolbar {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.mode-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 7px 10px;
+  border: 1.5px solid var(--border);
+  background: var(--paper2);
+  border-radius: var(--r); cursor: pointer; transition: all .12s;
+  min-width: 50px;
+}
+.mode-btn:hover { background: var(--paper3); border-color: var(--ink3); }
+.mode-btn.active {
+  background: var(--paper);
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+.mode-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.mode-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .05em; color: var(--ink3); text-transform: uppercase; pointer-events: none; }
+.mode-btn.active .mode-label { color: var(--ink); }
+
+/* Generic button */
+.btn {
+  font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .05em;
+  padding: 7px 16px; border: 1.5px solid var(--border);
+  background: var(--paper2); color: var(--ink);
+  border-radius: var(--r); cursor: pointer; transition: all .12s;
+}
+.btn:hover { background: var(--paper3); border-color: var(--ink3); }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.primary:hover { background: var(--ink2); }
+.btn.btn-gold { background: var(--gold); color: var(--paper); border-color: var(--gold); }
+.btn.btn-gold:hover { background: var(--gold2); border-color: var(--gold2); }
+
+/* ═══════════════════════════════════════════
+   COUNTDOWN
+═══════════════════════════════════════════ */
+.countdown-wrap {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink3);
+  margin-bottom: 40px;
+  letter-spacing: .04em;
+}
+.countdown-wrap strong {
+  display: block;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: .06em;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   LEADERBOARD
+═══════════════════════════════════════════ */
+.leaderboard-section {
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 48px;
+}
+.section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.section-title .date-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+  font-weight: 400;
+  letter-spacing: .04em;
+}
+.lb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.lb-table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  border-bottom: 1px solid var(--border);
+}
+.lb-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink2);
+}
+.lb-table tr:last-child td { border-bottom: none; }
+.lb-table .rank { color: var(--ink3); width: 28px; }
+.lb-table .flag { width: 28px; }
+.lb-table .name { font-weight: 500; color: var(--ink); }
+.lb-table .time { text-align: right; color: var(--gold); font-weight: 500; letter-spacing: .04em; }
+.lb-empty {
+  text-align: center;
+  padding: 28px 0;
+  color: var(--ink3);
+  font-size: 12px;
+  letter-spacing: .04em;
+}
+.lb-loading {
+  text-align: center;
+  padding: 20px 0;
+  color: var(--ink3);
+  font-size: 11px;
+}
+
+/* ═══════════════════════════════════════════
+   HOW TO PLAY
+═══════════════════════════════════════════ */
+.how-to-section {
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 48px;
+}
+.how-to-section p {
+  font-size: 13px;
+  color: var(--ink3);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+/* ═══════════════════════════════════════════
+   WIN OVERLAY
+═══════════════════════════════════════════ */
+#win-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.52); z-index: 200;
+  align-items: center; justify-content: center;
+}
+#win-overlay.show { display: flex; }
+.win-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 52px 40px 32px;
+  text-align: center;
+  max-width: 380px;
+  width: 92%;
+  animation: pop .28s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop { from { transform: scale(.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.win-icon { margin-bottom: 22px; }
+.win-card h2 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.win-subtitle {
+  font-size: 12px;
+  color: var(--ink3);
+  letter-spacing: .04em;
+  margin-bottom: 28px;
+}
+.win-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 28px;
+  color: var(--gold);
+  font-weight: 300;
+  letter-spacing: .06em;
+  margin-bottom: 28px;
+}
+.win-divider {
+  width: 100%; height: 1px;
+  background: var(--border);
+  margin-bottom: 20px;
+}
+/* lb form */
+.lb-form { margin-bottom: 0; }
+.lb-form-fields { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
+.lb-form input[type="text"] {
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  padding: 8px 12px; border: 1px solid var(--border);
+  background: var(--paper2); color: var(--ink);
+  border-radius: var(--r); width: 100%;
+}
+.lb-form input[type="text"]:focus { outline: none; border-color: var(--ink3); }
+.lb-form select {
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  padding: 8px 10px; border: 1px solid var(--border);
+  background: var(--paper2); color: var(--ink);
+  border-radius: var(--r); cursor: pointer; width: 100%;
+}
+.lb-form select:focus { outline: none; border-color: var(--ink3); }
+.win-submit-btn {
+  width: 100%;
+  margin-bottom: 20px;
+  background: transparent;
+  border-color: var(--ink3);
+  color: var(--ink);
+}
+.win-submit-btn:hover { background: var(--paper3); border-color: var(--ink); }
+.lb-submitted {
+  font-size: 11px; color: var(--gold);
+  letter-spacing: .05em; padding: 4px 0 18px;
+}
+/* bottom row: share · continue · more */
+.win-bottom-row {
+  display: flex; gap: 8px; justify-content: center;
+}
+.win-bottom-row .btn {
+  flex: 1; text-align: center;
+  font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 10px 6px;
+  white-space: nowrap; text-decoration: none;
+}
+.win-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+/* ═══════════════════════════════════════════
+   COFFEE BUTTON
+═══════════════════════════════════════════ */
+.coffee-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .05em;
+  padding: 8px 14px;
+  background: var(--paper2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  color: var(--ink3);
+  text-decoration: none;
+  transition: all .15s;
+  z-index: 40;
+}
+.coffee-btn:hover { background: var(--paper3); color: var(--ink); border-color: var(--ink3); }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: .04em;
+}
+footer a { color: var(--ink3); text-decoration: none; }
+footer a:hover { color: var(--ink); }
+.footer-links { display: flex; gap: 16px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 500px) {
+  :root { --cell: 30px; }
+  nav { padding: 0 16px; }
+  .nav-links { gap: 12px; }
+  .stats-row { gap: 20px; }
+  .win-card { padding: 28px 22px; }
+  .lb-form-fields { flex-direction: column; align-items: center; }
+  .lb-form input[type="text"], .lb-form select { width: 100%; max-width: 240px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">Non<span>ogram</span></a>
+  <ul class="nav-links">
+    <li><a href="/" class="active">Daily</a></li>
+    <li><a href="play.html">Play</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-badge" id="date-badge">Today's Puzzle</div>
+    <h1>Daily Nonogram</h1>
+    <p class="sub">A new Picross puzzle every day — solve it, beat the clock</p>
+  </div>
+
+  <!-- SIZE TABS -->
+  <div class="size-tabs">
+    <button class="size-tab active" data-size="5">5×5</button>
+    <button class="size-tab" data-size="10">10×10</button>
+    <button class="size-tab" data-size="15">15×15</button>
+    <button class="size-tab" data-size="20">20×20</button>
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat"><strong id="timer-val">0:00</strong>Time</div>
+    <div class="stat"><strong id="streak-val">—</strong>Streak</div>
+    <div class="stat"><strong id="best-val">—</strong>Best</div>
+  </div>
+
+  <!-- HINT -->
+  <div id="hint">Loading today's puzzle…</div>
+
+  <!-- PUZZLE AREA -->
+  <div class="puzzle-area">
+    <div class="puzzle-wrap" id="puzzle-wrap"></div>
+  </div>
+
+  <!-- MODE TOOLBAR -->
+  <div class="mode-toolbar">
+    <button class="mode-btn active" data-mode="fill" title="Fill · click again for ×, again to clear">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--ink)"/>
+        </svg>
+      </div>
+      <span class="mode-label">Fill</span>
+    </button>
+    <button class="mode-btn" data-mode="mark" title="Mark cell as empty (×)">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
+          <line x1="6" y1="6" x2="14" y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="6" x2="6"  y2="14" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="mode-label">Mark</span>
+    </button>
+    <button class="mode-btn" data-mode="note" title="Pencil note — unsure cells">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper3)" stroke="var(--border)" stroke-width="1.5"/>
+          <circle cx="6"  cy="7"  r="1.4" fill="var(--ink3)"/>
+          <circle cx="10" cy="7"  r="1.4" fill="var(--ink3)"/>
+          <circle cx="14" cy="7"  r="1.4" fill="var(--ink3)"/>
+          <circle cx="6"  cy="11" r="1.4" fill="var(--ink3)"/>
+          <circle cx="10" cy="11" r="1.4" fill="var(--ink3)"/>
+          <circle cx="14" cy="11" r="1.4" fill="var(--ink3)"/>
+          <circle cx="6"  cy="15" r="1.4" fill="var(--ink3)"/>
+          <circle cx="10" cy="15" r="1.4" fill="var(--ink3)"/>
+          <circle cx="14" cy="15" r="1.4" fill="var(--ink3)"/>
+        </svg>
+      </div>
+      <span class="mode-label">Note</span>
+    </button>
+    <button class="mode-btn" data-mode="erase" title="Erase / clear cell">
+      <div class="mode-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="1.5" y="1.5" width="17" height="17" rx="2" fill="var(--paper)" stroke="var(--border)" stroke-width="1.5"/>
+          <path d="M6 10 L10 6 L14 10 L10 14 Z" fill="none" stroke="var(--ink3)" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="mode-label">Erase</span>
+    </button>
+  </div>
+
+  <!-- GAME CONTROLS -->
+  <div class="game-controls">
+    <button class="btn" id="btn-reset">↺ Reset</button>
+    <button class="btn" id="btn-giveup">Give Up</button>
+  </div>
+
+  <!-- COUNTDOWN TO NEXT PUZZLE -->
+  <div class="countdown-wrap" id="countdown-wrap">
+    Next puzzle in
+    <strong id="countdown-val">—</strong>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="leaderboard-section">
+    <div class="section-title">
+      Leaderboard
+      <span class="date-label" id="lb-date-label"></span>
+    </div>
+    <div id="lb-content">
+      <div class="lb-loading">Loading…</div>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY -->
+  <div class="how-to-section">
+    <div class="section-title">How to Play</div>
+    <p>
+      Fill in the grid so every row and column matches its number clues. Each number
+      tells you how many consecutive filled cells appear in that line, in order —
+      with at least one empty cell between each group.
+    </p>
+    <p>
+      <strong>Click</strong> to fill a cell · <strong>Click again</strong> to mark it empty (×) ·
+      <strong>Right-click</strong> to mark directly · <strong>Drag</strong> to paint multiple cells.
+      Use <em>Note</em> mode to pencil in uncertain cells.
+    </p>
+    <p>
+      A new puzzle is available every day at midnight. Come back tomorrow!
+      Want more puzzles now? <a href="play.html" style="color:var(--gold)">Try unlimited play →</a>
+    </p>
+  </div>
+
+</main>
+
+<!-- WIN OVERLAY -->
+<div id="win-overlay">
+  <div class="win-card">
+
+    <div class="win-icon">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect x="16" y="2" width="19" height="19" rx="1.5" transform="rotate(45 16 2)" fill="var(--ink)" opacity=".12"/>
+        <rect x="16" y="6" width="13" height="13" rx="1" transform="rotate(45 16 6)" stroke="var(--ink)" stroke-width="1.5" fill="none"/>
+      </svg>
+    </div>
+
+    <h2>Solved</h2>
+    <div class="win-subtitle">Today's puzzle complete</div>
+    <div class="win-time" id="win-time-display">0:00</div>
+
+    <div class="win-divider"></div>
+
+    <!-- Leaderboard submission -->
+    <div id="lb-submit-area">
+      <div class="lb-form" id="lb-form">
+        <p style="font-size:11px;color:var(--ink3);letter-spacing:.05em;margin-bottom:10px;">Add your score to the leaderboard</p>
+        <div class="lb-form-fields">
+          <input type="text" id="lb-name" placeholder="Your name" maxlength="24" autocomplete="off">
+          <select id="lb-country"></select>
+        </div>
+        <button class="btn btn-gold win-submit-btn" id="btn-submit-lb">Add to leaderboard</button>
+      </div>
+      <div class="lb-submitted" id="lb-submitted-msg" style="display:none">
+        ✓ Score already submitted today
+      </div>
+    </div>
+
+    <div class="win-bottom-row">
+      <button class="btn btn-gold" id="btn-share-win">↗ Share</button>
+      <button class="btn" id="btn-close-win">Continue</button>
+      <a href="play.html" class="btn">Play more</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- COFFEE BUTTON -->
+<a class="coffee-btn" href="https://buymeacoffee.com/juulian" target="_blank" rel="noopener">☕ Support</a>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 nonogram.ch</span>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="about.html#privacy">Privacy</a>
+    <a href="nonogram-vs-picross.html">Nonogram vs Picross</a>
+    <a href="guide.html">Strategy Guide</a>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════
+   SUPABASE CONFIG
+   Replace with your actual project URL + anon key
+═══════════════════════════════════════════ */
+const SUPABASE_URL = 'https://thxgpofgpeqtmhucouqq.supabase.co';
+const SUPABASE_KEY = 'YOUR_ANON_KEY_HERE';
+const LB_TABLE     = 'daily_leaderboard';
+
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal',
+      ...opts.headers
+    },
+    ...opts
+  });
+  if (!res.ok) throw new Error(`Supabase ${res.status}`);
+  return res.headers.get('content-type')?.includes('json') ? res.json() : null;
+}
+
+/* ═══════════════════════════════════════════
+   RNG + SEED
+   Each size gets its own daily seed offset so
+   5×5 / 10×10 / 15×15 / 20×20 are all different.
+═══════════════════════════════════════════ */
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+const SIZE_OFFSETS = { 5: 0, 10: 1000, 15: 2000, 20: 3000 };
+
+function getDailySeed(size) {
+  const d = new Date();
+  const base = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+  return base + (SIZE_OFFSETS[size] || 0);
+}
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+/* ═══════════════════════════════════════════
+   GENERATOR
+═══════════════════════════════════════════ */
+function makeSolution(R, C, rng) {
+  return Array.from({length: R}, () =>
+    Array.from({length: C}, () => rng() < 0.55 ? 1 : 0)
+  );
+}
+function getClues(line) {
+  const out = []; let n = 0;
+  for (const v of line) { if (v === 1) n++; else if (n) { out.push(n); n = 0; } }
+  if (n) out.push(n);
+  return out.length ? out : [0];
+}
+
+/* ═══════════════════════════════════════════
+   LINE SOLVER
+═══════════════════════════════════════════ */
+function solveLine(clues, cur) {
+  const len = cur.length;
+  if (clues.length === 1 && clues[0] === 0) {
+    const r = cur.slice();
+    for (let i = 0; i < len; i++) { if (cur[i] === 1) return null; r[i] = -1; }
+    return r;
+  }
+  const af = new Array(len).fill(true), ae = new Array(len).fill(true);
+  let found = false;
+  const minLen = g => { let l = 0; for (let i = g; i < clues.length; i++) l += clues[i] + (i > g ? 1 : 0); return l; };
+  function place(g, pos, pl) {
+    if (g === clues.length) {
+      for (let i = pos; i < len; i++) { if (cur[i] === 1) return; }
+      found = true;
+      const fill = new Array(len).fill(false);
+      for (let k = 0; k < pl.length; k++) for (let j = pl[k]; j < pl[k] + clues[k]; j++) fill[j] = true;
+      for (let i = 0; i < len; i++) { if (!fill[i]) af[i] = false; if (fill[i]) ae[i] = false; }
+      return;
+    }
+    const max = len - minLen(g);
+    for (let s = pos; s <= max; s++) {
+      let ok = true;
+      for (let i = pos; i < s; i++) { if (cur[i] === 1) { ok = false; break; } }
+      if (!ok) break;
+      for (let i = s; i < s + clues[g]; i++) { if (cur[i] === -1) { ok = false; break; } }
+      if (!ok) continue;
+      if (s + clues[g] < len && cur[s + clues[g]] === 1) continue;
+      pl.push(s); place(g + 1, s + clues[g] + 1, pl); pl.pop();
+    }
+  }
+  place(0, 0, []);
+  if (!found) return null;
+  const res = cur.slice();
+  for (let i = 0; i < len; i++) {
+    if (af[i] && cur[i] !== -1) res[i] = 1;
+    if (ae[i] && cur[i] !== 1)  res[i] = -1;
+  }
+  return res;
+}
+function solveGrid(rowClues, colClues, R, C) {
+  let g = Array.from({length: R}, () => new Array(C).fill(0));
+  let ch = true, it = 0;
+  while (ch && it++ < R + C + 20) {
+    ch = false;
+    for (let r = 0; r < R; r++) {
+      const nl = solveLine(rowClues[r], g[r]); if (!nl) return null;
+      for (let c = 0; c < C; c++) { if (nl[c] !== g[r][c]) { ch = true; g[r][c] = nl[c]; } }
+    }
+    for (let c = 0; c < C; c++) {
+      const col = g.map(r2 => r2[c]), nl = solveLine(colClues[c], col); if (!nl) return null;
+      for (let r = 0; r < R; r++) { if (nl[r] !== g[r][c]) { ch = true; g[r][c] = nl[r]; } }
+    }
+  }
+  return g;
+}
+function isUnique(rC, cC, R, C) {
+  const g = solveGrid(rC, cC, R, C);
+  return g !== null && g.every(row => row.every(v => v !== 0));
+}
+function generatePuzzle(R, C, seed) {
+  const rng = mulberry32(seed);
+  for (let a = 1; a <= 300; a++) {
+    const sol = makeSolution(R, C, rng);
+    const rowClues = sol.map(r => getClues(r));
+    const colClues = Array.from({length: C}, (_, c) => getClues(sol.map(r => r[c])));
+    if (isUnique(rowClues, colClues, R, C))
+      return { R, C, rowClues, colClues, solution: sol };
+  }
+  // fallback
+  const rng2 = mulberry32(seed);
+  const sol = makeSolution(R, C, rng2);
+  return { R, C, rowClues: sol.map(r => getClues(r)), colClues: Array.from({length: C}, (_, c) => getClues(sol.map(r => r[c]))), solution: sol };
+}
+
+/* ═══════════════════════════════════════════
+   GAME STATE
+═══════════════════════════════════════════ */
+let puzzle     = null;
+let player     = null;   // 0=empty 1=filled -1=marked 2=noted
+let solved     = false;
+let dragMode   = null;
+let mode       = 'fill';
+let timerSec   = 0;
+let timerID    = null;
+let currentSize = 5;
+const TODAY    = getTodayStr();
+
+/* ═══════════════════════════════════════════
+   LOCAL STORAGE helpers
+═══════════════════════════════════════════ */
+function lsKey(type) { return `nonogram_${type}_${currentSize}_${TODAY}`; }
+
+function saveProgress() {
+  try { localStorage.setItem(lsKey('progress'), JSON.stringify(player)); } catch(e){}
+  try { localStorage.setItem(lsKey('time'), timerSec); } catch(e){}
+}
+
+function loadProgress() {
+  try {
+    const p = localStorage.getItem(lsKey('progress'));
+    if (p) player = JSON.parse(p);
+  } catch(e){}
+  try {
+    const t = localStorage.getItem(lsKey('time'));
+    if (t) timerSec = +t;
+  } catch(e){}
+}
+
+function markSolvedLocally() {
+  try { localStorage.setItem(lsKey('solved'), '1'); } catch(e){}
+}
+function wasSolvedToday() {
+  try { return !!localStorage.getItem(lsKey('solved')); } catch(e){ return false; }
+}
+
+function getBestTime() {
+  try { return localStorage.getItem(`nonogram_best_${currentSize}`) || null; } catch(e){ return null; }
+}
+function setBestTime(t) {
+  try {
+    const cur = getBestTime();
+    if (!cur || t < +cur) localStorage.setItem(`nonogram_best_${currentSize}`, t);
+  } catch(e){}
+}
+
+function getStreak() {
+  try { return +(localStorage.getItem(`nonogram_streak_${currentSize}`) || 0); } catch(e){ return 0; }
+}
+function updateStreak() {
+  try {
+    const lastKey = `nonogram_lastsolve_${currentSize}`;
+    const last = localStorage.getItem(lastKey);
+    const d = new Date();
+    const yest = new Date(d); yest.setDate(yest.getDate() - 1);
+    const yestStr = `${yest.getFullYear()}-${String(yest.getMonth()+1).padStart(2,'0')}-${String(yest.getDate()).padStart(2,'0')}`;
+    let streak = getStreak();
+    if (last === yestStr || last === TODAY) {
+      if (last !== TODAY) streak++;
+    } else {
+      streak = 1;
+    }
+    localStorage.setItem(`nonogram_streak_${currentSize}`, streak);
+    localStorage.setItem(lastKey, TODAY);
+    return streak;
+  } catch(e){ return 1; }
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+function render() {
+  const wrap = document.getElementById('puzzle-wrap');
+  wrap.innerHTML = '';
+  if (!puzzle) return;
+  const { R, C, rowClues, colClues } = puzzle;
+  const maxRC = Math.max(...rowClues.map(c => c.length));
+  const maxCC = Math.max(...colClues.map(c => c.length));
+
+  const table = document.createElement('table');
+  table.className = 'nonogram-table';
+
+  // Column clue row
+  {
+    const tr = document.createElement('tr');
+    const corner = document.createElement('td');
+    corner.className = 'clue-corner'; corner.colSpan = maxRC;
+    tr.appendChild(corner);
+    for (let c = 0; c < C; c++) {
+      const td = document.createElement('td');
+      td.className = 'clue-v'; td.id = `cv-${c}`;
+      const inner = document.createElement('div');
+      inner.className = 'clue-v-inner';
+      const cl = colClues[c], pad = maxCC - cl.length;
+      for (let p = 0; p < pad; p++) {
+        const sp = document.createElement('span');
+        sp.className = 'clue-v-digit'; sp.innerHTML = '&nbsp;';
+        inner.appendChild(sp);
+      }
+      for (const v of cl) {
+        const sp = document.createElement('span');
+        sp.className = 'clue-v-digit'; sp.textContent = v;
+        inner.appendChild(sp);
+      }
+      td.appendChild(inner); tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+
+  // Game rows
+  for (let r = 0; r < R; r++) {
+    const tr = document.createElement('tr');
+    const rclue = document.createElement('td');
+    rclue.className = 'clue-h'; rclue.id = `rh-${r}`; rclue.colSpan = maxRC;
+    rclue.textContent = rowClues[r].join('\u2009\u2009');
+    tr.appendChild(rclue);
+    for (let c = 0; c < C; c++) {
+      const td = document.createElement('td');
+      td.className = 'cell';
+      td.dataset.r = r; td.dataset.c = c;
+      if ((c + 1) % 5 === 0 && c < C - 1) td.classList.add('b5r');
+      if ((r + 1) % 5 === 0 && r < R - 1) td.classList.add('b5b');
+      td.addEventListener('mousedown', cellDown);
+      td.addEventListener('mouseenter', cellEnter);
+      td.addEventListener('contextmenu', e => e.preventDefault());
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+
+  const gridWrap = document.createElement('div');
+  gridWrap.className = 'grid-wrap';
+  gridWrap.appendChild(table);
+  wrap.appendChild(gridWrap);
+  refreshAll();
+}
+
+function refreshAll() {
+  if (!puzzle) return;
+  for (let r = 0; r < puzzle.R; r++)
+    for (let c = 0; c < puzzle.C; c++)
+      refreshCell(r, c);
+  refreshClues();
+}
+
+function refreshCell(r, c) {
+  const td = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+  if (!td) return;
+  td.classList.remove('filled', 'marked', 'noted');
+  const v = player[r][c];
+  if (v === 1)  td.classList.add('filled');
+  if (v === -1) td.classList.add('marked');
+  if (v === 2)  td.classList.add('noted');
+}
+
+function refreshClues() {
+  if (!puzzle) return;
+  for (let r = 0; r < puzzle.R; r++) {
+    const el = document.getElementById(`rh-${r}`);
+    if (el) el.classList.toggle('clue-done', isRowDone(r));
+  }
+  for (let c = 0; c < puzzle.C; c++) {
+    const el = document.getElementById(`cv-${c}`);
+    if (el) el.classList.toggle('clue-done', isColDone(c));
+  }
+}
+
+function isRowDone(r) {
+  return JSON.stringify(getClues(player[r].map(v => v === 1 ? 1 : 0))) === JSON.stringify(puzzle.rowClues[r]);
+}
+function isColDone(c) {
+  return JSON.stringify(getClues(player.map(row => row[c] === 1 ? 1 : 0))) === JSON.stringify(puzzle.colClues[c]);
+}
+
+/* ═══════════════════════════════════════════
+   INTERACTION
+═══════════════════════════════════════════ */
+function stateForMode(cur, m) {
+  if (m === 'fill') {
+    if (cur === 0) return 1;
+    if (cur === 1) return -1;
+    return 0;
+  }
+  if (m === 'mark')  return cur === -1 ? 0 : -1;
+  if (m === 'note')  return cur === 2  ? 0 : 2;
+  if (m === 'erase') return 0;
+  return 0;
+}
+
+function cellDown(e) {
+  if (solved) return;
+  e.preventDefault();
+  // Start timer on first interaction
+  if (!timerID) startTimer();
+  const r = +e.target.dataset.r, c = +e.target.dataset.c;
+  const cur = player[r][c];
+  let next;
+  if (e.button === 2) {
+    next = cur === -1 ? 0 : -1;
+    dragMode = 'rclick_' + next;
+  } else {
+    next = stateForMode(cur, mode);
+    dragMode = mode + '_' + next;
+  }
+  applyTo(r, c, next);
+  checkWin();
+}
+
+function cellEnter(e) {
+  if (!dragMode || solved) return;
+  const r = +e.target.dataset.r, c = +e.target.dataset.c;
+  const parts = dragMode.split('_');
+  const targetVal = parseInt(parts[parts.length - 1], 10);
+  if (player[r][c] !== targetVal) applyTo(r, c, targetVal);
+}
+
+document.addEventListener('mouseup', () => {
+  if (dragMode) { saveProgress(); checkWin(); }
+  dragMode = null;
+});
+
+function applyTo(r, c, val) {
+  player[r][c] = val;
+  refreshCell(r, c);
+  refreshClues();
+}
+
+/* ═══════════════════════════════════════════
+   WIN
+═══════════════════════════════════════════ */
+function checkWin() {
+  if (solved || !puzzle) return;
+  const { R, C, solution } = puzzle;
+  for (let r = 0; r < R; r++)
+    for (let c = 0; c < C; c++)
+      if ((player[r][c] === 1 ? 1 : 0) !== solution[r][c]) return;
+
+  solved = true;
+  stopTimer();
+  markSolvedLocally();
+  setBestTime(timerSec);
+  const streak = updateStreak();
+  updateStatDisplay();
+  saveProgress();
+
+  setTimeout(() => {
+    document.getElementById('win-time-display').textContent = fmtTime(timerSec);
+    // Hide form if already submitted today
+    const submitted = localStorage.getItem(`nonogram_lb_submitted_${currentSize}_${TODAY}`);
+    if (submitted) {
+      document.getElementById('lb-form').style.display = 'none';
+      document.getElementById('lb-submitted-msg').style.display = 'block';
+    }
+    document.getElementById('win-overlay').classList.add('show');
+  }, 180);
+}
+
+/* ═══════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════ */
+function startTimer() {
+  if (timerID) return;
+  timerID = setInterval(() => {
+    timerSec++;
+    document.getElementById('timer-val').textContent = fmtTime(timerSec);
+    if (timerSec % 10 === 0) saveProgress();
+  }, 1000);
+}
+function stopTimer()  { clearInterval(timerID); timerID = null; }
+function resetTimer() { stopTimer(); timerSec = 0; document.getElementById('timer-val').textContent = '0:00'; }
+function fmtTime(s)   { return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+
+function updateStatDisplay() {
+  const best = getBestTime();
+  document.getElementById('best-val').textContent = best ? fmtTime(+best) : '—';
+  document.getElementById('streak-val').textContent = getStreak() || '—';
+}
+
+/* ═══════════════════════════════════════════
+   COUNTDOWN
+═══════════════════════════════════════════ */
+function updateCountdown() {
+  const now  = new Date();
+  const next = new Date(now);
+  next.setHours(24, 0, 0, 0);
+  const diff = Math.floor((next - now) / 1000);
+  const h = Math.floor(diff / 3600);
+  const m = Math.floor((diff % 3600) / 60);
+  const s = diff % 60;
+  document.getElementById('countdown-val').textContent =
+    `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+/* ═══════════════════════════════════════════
+   LEADERBOARD
+═══════════════════════════════════════════ */
+async function loadLeaderboard() {
+  const el = document.getElementById('lb-content');
+  const date = TODAY;
+  document.getElementById('lb-date-label').textContent = date;
+  try {
+    const rows = await sbFetch(
+      `${LB_TABLE}?date=eq.${date}&size=eq.${currentSize}&order=time_seconds.asc&limit=50`,
+      { method: 'GET', headers: { 'Range': '0-49' } }
+    );
+    if (!rows || rows.length === 0) {
+      el.innerHTML = '<div class="lb-empty">No scores yet today — be the first!</div>';
+      return;
+    }
+    const html = `<table class="lb-table">
+      <thead><tr>
+        <th>#</th><th></th><th>Name</th><th class="time">Time</th>
+      </tr></thead>
+      <tbody>${rows.map((r, i) => `
+        <tr>
+          <td class="rank">${i+1}</td>
+          <td class="flag">${r.flag || ''}</td>
+          <td class="name">${escapeHtml(r.name || 'Anonymous')}</td>
+          <td class="time">${fmtTime(r.time_seconds)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = '<div class="lb-empty">Could not load leaderboard.</div>';
+  }
+}
+
+async function submitScore(name, country, flag) {
+  await sbFetch(LB_TABLE, {
+    method: 'POST',
+    body: JSON.stringify({
+      date: TODAY,
+      size: currentSize,
+      name: name.trim() || 'Anonymous',
+      country,
+      flag,
+      time_seconds: timerSec
+    })
+  });
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ═══════════════════════════════════════════
+   COUNTRY LIST (110 countries)
+═══════════════════════════════════════════ */
+const COUNTRIES = [
+  ['AF','🇦🇫','Afghanistan'],['AL','🇦🇱','Albania'],['DZ','🇩🇿','Algeria'],['AR','🇦🇷','Argentina'],
+  ['AU','🇦🇺','Australia'],['AT','🇦🇹','Austria'],['BE','🇧🇪','Belgium'],['BR','🇧🇷','Brazil'],
+  ['BG','🇧🇬','Bulgaria'],['CA','🇨🇦','Canada'],['CL','🇨🇱','Chile'],['CN','🇨🇳','China'],
+  ['CO','🇨🇴','Colombia'],['HR','🇭🇷','Croatia'],['CZ','🇨🇿','Czech Republic'],['DK','🇩🇰','Denmark'],
+  ['EG','🇪🇬','Egypt'],['FI','🇫🇮','Finland'],['FR','🇫🇷','France'],['DE','🇩🇪','Germany'],
+  ['GH','🇬🇭','Ghana'],['GR','🇬🇷','Greece'],['HU','🇭🇺','Hungary'],['IN','🇮🇳','India'],
+  ['ID','🇮🇩','Indonesia'],['IR','🇮🇷','Iran'],['IE','🇮🇪','Ireland'],['IL','🇮🇱','Israel'],
+  ['IT','🇮🇹','Italy'],['JP','🇯🇵','Japan'],['JO','🇯🇴','Jordan'],['KE','🇰🇪','Kenya'],
+  ['KR','🇰🇷','South Korea'],['KW','🇰🇼','Kuwait'],['LB','🇱🇧','Lebanon'],['LT','🇱🇹','Lithuania'],
+  ['MY','🇲🇾','Malaysia'],['MX','🇲🇽','Mexico'],['MA','🇲🇦','Morocco'],['NL','🇳🇱','Netherlands'],
+  ['NZ','🇳🇿','New Zealand'],['NG','🇳🇬','Nigeria'],['NO','🇳🇴','Norway'],['PK','🇵🇰','Pakistan'],
+  ['PE','🇵🇪','Peru'],['PH','🇵🇭','Philippines'],['PL','🇵🇱','Poland'],['PT','🇵🇹','Portugal'],
+  ['RO','🇷🇴','Romania'],['RU','🇷🇺','Russia'],['SA','🇸🇦','Saudi Arabia'],['RS','🇷🇸','Serbia'],
+  ['SG','🇸🇬','Singapore'],['ZA','🇿🇦','South Africa'],['ES','🇪🇸','Spain'],['SE','🇸🇪','Sweden'],
+  ['CH','🇨🇭','Switzerland'],['TW','🇹🇼','Taiwan'],['TH','🇹🇭','Thailand'],['TN','🇹🇳','Tunisia'],
+  ['TR','🇹🇷','Turkey'],['UA','🇺🇦','Ukraine'],['AE','🇦🇪','United Arab Emirates'],
+  ['GB','🇬🇧','United Kingdom'],['US','🇺🇸','United States'],['UY','🇺🇾','Uruguay'],
+  ['VN','🇻🇳','Vietnam'],['ZW','🇿🇼','Zimbabwe']
+];
+
+function populateCountries() {
+  const sel = document.getElementById('lb-country');
+  // Remove the blank placeholder — we'll show a real country immediately
+  sel.innerHTML = '';
+  COUNTRIES.forEach(([code, flag, name]) => {
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.dataset.flag = flag;
+    opt.textContent = `${flag} ${name}`;
+    sel.appendChild(opt);
+  });
+  // Try to auto-detect from browser language
+  const lang = navigator.language || '';
+  let matched = false;
+  if (lang.includes('-')) {
+    const cc = lang.split('-')[1].toUpperCase();
+    const match = COUNTRIES.find(([c]) => c === cc);
+    if (match) { sel.value = match[0]; matched = true; }
+  }
+  // Fallback: default to Switzerland
+  if (!matched) sel.value = 'CH';
+}
+
+/* ═══════════════════════════════════════════
+   INIT PUZZLE FOR A SIZE
+═══════════════════════════════════════════ */
+function initSize(size) {
+  currentSize = size;
+
+  // Update tab UI
+  document.querySelectorAll('.size-tab').forEach(b => {
+    b.classList.toggle('active', +b.dataset.size === size);
+  });
+
+  // Reset mode to fill
+  mode = 'fill';
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.mode-btn[data-mode="fill"]').classList.add('active');
+
+  // Generate puzzle (cached in localStorage)
+  const seed = getDailySeed(size);
+  const cacheKey = `nonogram_puzzle_${size}_${TODAY}`;
+  let cached;
+  try { cached = JSON.parse(localStorage.getItem(cacheKey)); } catch(e){}
+
+  if (cached) {
+    puzzle = cached;
+  } else {
+    puzzle = generatePuzzle(size, size, seed);
+    try { localStorage.setItem(cacheKey, JSON.stringify(puzzle)); } catch(e){}
+  }
+
+  // Load or fresh player grid
+  player = Array.from({length: size}, () => new Array(size).fill(0));
+  loadProgress();
+
+  solved = wasSolvedToday();
+
+  stopTimer();
+  timerSec = 0;
+  // Restore saved time if progress exists
+  if (player.flat().some(v => v !== 0)) {
+    try { timerSec = +(localStorage.getItem(lsKey('time')) || 0); } catch(e){}
+  }
+  document.getElementById('timer-val').textContent = fmtTime(timerSec);
+  // Only auto-resume timer if puzzle is in progress (not solved, has cells filled)
+  if (!solved && player.flat().some(v => v !== 0)) startTimer();
+
+  if (solved) {
+    document.getElementById('hint').textContent = '✓ Already solved today — come back tomorrow!';
+  } else {
+    document.getElementById('hint').textContent = 'Click: fill  ·  Click again: ×  ·  Right-click: × directly';
+  }
+
+  render();
+  updateStatDisplay();
+  loadLeaderboard();
+}
+
+/* ═══════════════════════════════════════════
+   BUTTON WIRING
+═══════════════════════════════════════════ */
+// Size tabs
+document.querySelectorAll('.size-tab').forEach(btn => {
+  btn.addEventListener('click', () => initSize(+btn.dataset.size));
+});
+
+// Reset
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (!puzzle) return;
+  player = Array.from({length: puzzle.R}, () => new Array(puzzle.C).fill(0));
+  solved = false;
+  resetTimer();
+  refreshAll();
+  document.getElementById('hint').textContent = 'Click: fill  ·  Click again: ×  ·  Right-click: × directly';
+  saveProgress();
+});
+
+// Give up
+document.getElementById('btn-giveup').addEventListener('click', () => {
+  if (!puzzle || solved) return;
+  if (!confirm('Reveal the solution?')) return;
+  player = puzzle.solution.map(r => r.slice());
+  solved = true;
+  stopTimer();
+  refreshAll();
+  document.getElementById('hint').textContent = '✓ Solution revealed.';
+});
+
+// Mode toolbar
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Share button — always copies, shows ✓ Copied, resets after 2s
+function doShare(btnEl, msg) {
+  navigator.clipboard.writeText(msg).then(() => {
+    btnEl.textContent = '✓ Copied!';
+    btnEl.classList.add('btn-gold');
+    setTimeout(() => {
+      btnEl.textContent = '↗ Share';
+      btnEl.classList.remove('btn-gold');
+    }, 2000);
+  }).catch(() => {
+    prompt('Copy this:', msg);
+  });
+}
+
+document.getElementById('btn-share-win').addEventListener('click', function() {
+  const sizeLabel = `${currentSize}×${currentSize}`;
+  const msg = `I solved today's ${sizeLabel} Nonogram in ${fmtTime(timerSec)} 🧩\nnonogram.ch`;
+  doShare(this, msg);
+});
+
+// Win overlay close
+document.getElementById('btn-close-win').addEventListener('click', () => {
+  document.getElementById('win-overlay').classList.remove('show');
+  loadLeaderboard();
+});
+
+// Leaderboard submit
+document.getElementById('btn-submit-lb').addEventListener('click', async () => {
+  const name = document.getElementById('lb-name').value.trim() || 'Anonymous';
+  const sel  = document.getElementById('lb-country');
+  const country = sel.value;
+  const flag = sel.options[sel.selectedIndex]?.dataset?.flag || '';
+
+  const btn = document.getElementById('btn-submit-lb');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  try {
+    await submitScore(name, country, flag);
+    localStorage.setItem(`nonogram_lb_submitted_${currentSize}_${TODAY}`, '1');
+    document.getElementById('lb-form').style.display = 'none';
+    document.getElementById('lb-submitted-msg').style.display = 'block';
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Submit Score';
+    alert('Could not submit score. Please try again.');
+  }
+});
+
+/* ═══════════════════════════════════════════
+   COUNTDOWN TICK
+═══════════════════════════════════════════ */
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+/* ═══════════════════════════════════════════
+   DATE BADGE
+═══════════════════════════════════════════ */
+(function() {
+  const d = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('date-badge').textContent =
+    `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+})();
+
+/* ═══════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════ */
+populateCountries();
+initSize(5);
+</script>
+</body>
+</html>
