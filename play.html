@@ -78,7 +78,6 @@ nav {
   color: var(--ink);
   text-decoration: none;
   letter-spacing: .06em;
-  text-transform: uppercase;
 }
 .nav-links { display: flex; gap: 20px; list-style: none; }
 .nav-links a {
@@ -373,7 +372,7 @@ main {
    COFFEE
 ═══════════════════════════════════════════ */
 .coffee-btn {
-  position: fixed; bottom: 72px; right: 20px;
+  position: fixed; bottom: 20px; right: 20px;
   font-family: 'DM Mono', monospace; font-size: 11px;
   letter-spacing: .05em; padding: 8px 14px;
   background: var(--gold); border: 1.5px solid var(--gold); border-radius: 20px; color: var(--paper);
@@ -410,7 +409,7 @@ footer a:hover { color: var(--ink); }
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="index.html">Nonogram</a>
+  <a class="nav-logo" href="index.html">nonogram.ch</a>
   <ul class="nav-links">
     <li><a href="index.html">Daily</a></li>
     <li><a href="play.html" class="active">Play</a></li>
@@ -942,6 +941,30 @@ document.getElementById('btn-close-win').addEventListener('click', () => {
    INIT
 ═══════════════════════════════════════════ */
 newPuzzle(10);
+</script>
+
+<script>
+// Keep support button above footer when scrolled to bottom
+(function() {
+  const btn = document.querySelector('.coffee-btn');
+  if (!btn) return;
+  const footer = document.querySelector('footer');
+  function reposition() {
+    if (!footer) return;
+    const footerTop = footer.getBoundingClientRect().top;
+    const viewH = window.innerHeight;
+    const btnH = btn.offsetHeight;
+    const gap = 20;
+    if (footerTop < viewH) {
+      btn.style.bottom = (viewH - footerTop + gap) + 'px';
+    } else {
+      btn.style.bottom = gap + 'px';
+    }
+  }
+  window.addEventListener('scroll', reposition, { passive: true });
+  window.addEventListener('resize', reposition);
+  reposition();
+})();
 </script>
 </body>
 </html>
