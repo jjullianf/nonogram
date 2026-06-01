@@ -839,7 +839,7 @@ footer a:hover { color: var(--ink); }
 ═══════════════════════════════════════════ */
 const SUPABASE_URL = 'https://thxgpofgpeqtmhucouqq.supabase.co';
 const SUPABASE_KEY = 'YOUR_ANON_KEY_HERE';
-const LB_TABLE     = 'daily_leaderboard';
+const LB_TABLE     = 'nonogram_leaderboard';
 
 async function sbFetch(path, opts = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
