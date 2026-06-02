@@ -1271,7 +1271,13 @@ function checkWin() {
 
   setTimeout(() => {
     document.getElementById('win-time-display').textContent = fmtTime(timerSec);
-    // Hide form if already submitted today
+    // Reset form to visible first, then check if already submitted for THIS size
+    document.getElementById('lb-form').style.display = 'block';
+    document.getElementById('lb-submitted-msg').style.display = 'none';
+    const submitBtn = document.getElementById('btn-submit-lb');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add to leaderboard';
+    // Now check if this specific size was already submitted today
     const submitted = localStorage.getItem(`nonogram_lb_submitted_${currentSize}_${TODAY}`);
     if (submitted) {
       document.getElementById('lb-form').style.display = 'none';
