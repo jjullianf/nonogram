@@ -42,7 +42,8 @@
   --r:      3px;
 }
 @media (max-width: 600px) {
-  :root { --cell: clamp(24px, 7.5vw, 36px); }
+  :root { --cell: clamp(22px, calc((100vw - 116px) / 10), 34px); }
+  .puzzle-wrap { justify-content: flex-start; padding-left: 8px; }
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -772,8 +773,7 @@ function render() {
       if ((c + 1) % 5 === 0 && c < C - 1) td.classList.add('b5r');
       if ((r + 1) % 5 === 0 && r < R - 1) td.classList.add('b5b');
       td.addEventListener('mousedown', cellDown);
-      td.addEventListener('mouseenter', cellEnter);
-      td.addEventListener('contextmenu', e => e.preventDefault());
+      td.addEventListener('contextmenu', onContextMenu);
       tr.appendChild(td);
     }
     table.appendChild(tr);
@@ -789,6 +789,7 @@ function render() {
   outer.appendChild(gw);
 
   wrap.appendChild(outer);
+  attachTouchListeners();
 
   requestAnimationFrame(() => {
     const colClueRow = table.querySelector('tr:first-child');
@@ -843,6 +844,9 @@ function isColDone(c) {
 /* ═══════════════════════════════════════════
    INTERACTION
 ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   INTERACTION — desktop + mobile touch
+═══════════════════════════════════════════ */
 function stateForMode(cur, m) {
   if (m === 'fill') { if (cur === 0) return 1; if (cur === 1) return -1; return 0; }
   if (m === 'mark')  return cur === -1 ? 0 : -1;
@@ -850,28 +854,69 @@ function stateForMode(cur, m) {
   if (m === 'erase') return 0;
   return 0;
 }
+function cellFromPoint(x, y) {
+  const el = document.elementFromPoint(x, y);
+  if (el && el.classList.contains('cell')) return el;
+  if (el && el.parentElement && el.parentElement.classList.contains('cell')) return el.parentElement;
+  return null;
+}
+function startDrag(el, rightClick) {
+  if (solved) return;
+  if (!timerID) startTimer();
+  const r = +el.dataset.r, c = +el.dataset.c;
+  const cur = player[r][c];
+  let next;
+  if (rightClick) { next = cur === -1 ? 0 : -1; dragMode = 'rclick_' + next; }
+  else { next = stateForMode(cur, mode); dragMode = mode + '_' + next; }
+  applyTo(r, c, next);
+}
+function continueDrag(el) {
+  if (!dragMode || solved || !el) return;
+  const r = +el.dataset.r, c = +el.dataset.c;
+  const parts = dragMode.split('_');
+  const targetVal = parseInt(parts[parts.length - 1], 10);
+  if (player[r][c] !== targetVal) applyTo(r, c, targetVal);
+}
+function endDrag() { if (dragMode) checkWin(); dragMode = null; }
+
 function cellDown(e) {
   if (solved) return;
   e.preventDefault();
-  if (!timerID) startTimer();
-  const r = +e.target.dataset.r, c = +e.target.dataset.c;
-  const cur = player[r][c];
-  let next;
-  if (e.button === 2) { next = cur === -1 ? 0 : -1; dragMode = 'rclick_' + next; }
-  else { next = stateForMode(cur, mode); dragMode = mode + '_' + next; }
-  applyTo(r, c, next); checkWin();
+  startDrag(e.currentTarget, e.button === 2);
+  checkWin();
 }
-function cellEnter(e) {
+document.addEventListener('mousemove', (e) => {
   if (!dragMode || solved) return;
-  const r = +e.target.dataset.r, c = +e.target.dataset.c;
-  const parts = dragMode.split('_');
-  const tv = parseInt(parts[parts.length - 1], 10);
-  if (player[r][c] !== tv) applyTo(r, c, tv);
+  const el = cellFromPoint(e.clientX, e.clientY);
+  if (el) continueDrag(el);
+});
+document.addEventListener('mouseup', endDrag);
+function onContextMenu(e) { e.preventDefault(); }
+
+function cellTouchStart(e) {
+  if (solved) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const el = cellFromPoint(touch.clientX, touch.clientY);
+  if (el) startDrag(el, false);
 }
-document.addEventListener('mouseup', () => { if (dragMode) checkWin(); dragMode = null; });
-function applyTo(r, c, val) {
-  player[r][c] = val; refreshCell(r, c); refreshClues();
+function onTouchMove(e) {
+  if (!dragMode || solved) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const el = cellFromPoint(touch.clientX, touch.clientY);
+  if (el) continueDrag(el);
 }
+function onTouchEnd() { endDrag(); }
+
+function attachTouchListeners() {
+  const wrap = document.getElementById('puzzle-wrap');
+  if (!wrap) return;
+  wrap.addEventListener('touchstart', cellTouchStart, { passive: false });
+  wrap.addEventListener('touchmove',  onTouchMove,    { passive: false });
+  wrap.addEventListener('touchend',   onTouchEnd,     { passive: true });
+}
+function applyTo(r, c, val) { player[r][c] = val; refreshCell(r, c); refreshClues(); }
 
 /* ═══════════════════════════════════════════
    WIN

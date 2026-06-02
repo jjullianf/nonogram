@@ -55,10 +55,15 @@
 }
 @media (max-width: 600px) {
   :root {
-    /* Scale cell to fit 10 columns + clues in viewport.
-       Viewport ~390px, clues ~50px, padding ~16px → ~324px / 10 = ~32px.
-       Use vw so it scales smoothly on any phone. */
-    --cell: clamp(24px, 7.5vw, 36px);
+    /* 
+      Fit 10 cells + ~100px clues + 16px padding in viewport.
+      (vw - 116px) / 10 — clamped so it never gets tiny or too big.
+    */
+    --cell: clamp(22px, calc((100vw - 116px) / 10), 34px);
+  }
+  .puzzle-wrap {
+    justify-content: flex-start;
+    padding-left: 8px;
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -1148,8 +1153,7 @@ function render() {
       if ((c + 1) % 5 === 0 && c < C - 1) td.classList.add('b5r');
       if ((r + 1) % 5 === 0 && r < R - 1) td.classList.add('b5b');
       td.addEventListener('mousedown', cellDown);
-      td.addEventListener('mouseenter', cellEnter);
-      td.addEventListener('contextmenu', e => e.preventDefault());
+      td.addEventListener('contextmenu', onContextMenu);
       tr.appendChild(td);
     }
     table.appendChild(tr);
@@ -1165,6 +1169,7 @@ function render() {
   outer.appendChild(gw);
 
   wrap.appendChild(outer);
+  attachTouchListeners();
 
   // Measure and sync spacer height to the actual rendered col-clue row
   requestAnimationFrame(() => {
@@ -1226,7 +1231,7 @@ function isColDone(c) {
 }
 
 /* ═══════════════════════════════════════════
-   INTERACTION
+   INTERACTION — desktop + mobile touch
 ═══════════════════════════════════════════ */
 function stateForMode(cur, m) {
   if (m === 'fill') {
@@ -1240,15 +1245,21 @@ function stateForMode(cur, m) {
   return 0;
 }
 
-function cellDown(e) {
+// Get cell element from coordinates (for mousemove + touch)
+function cellFromPoint(x, y) {
+  const el = document.elementFromPoint(x, y);
+  if (el && el.classList.contains('cell')) return el;
+  if (el && el.parentElement && el.parentElement.classList.contains('cell')) return el.parentElement;
+  return null;
+}
+
+function startDrag(el, rightClick) {
   if (solved) return;
-  e.preventDefault();
-  // Start timer on first interaction
   if (!timerID) startTimer();
-  const r = +e.target.dataset.r, c = +e.target.dataset.c;
+  const r = +el.dataset.r, c = +el.dataset.c;
   const cur = player[r][c];
   let next;
-  if (e.button === 2) {
+  if (rightClick) {
     next = cur === -1 ? 0 : -1;
     dragMode = 'rclick_' + next;
   } else {
@@ -1256,21 +1267,72 @@ function cellDown(e) {
     dragMode = mode + '_' + next;
   }
   applyTo(r, c, next);
-  checkWin();
 }
 
-function cellEnter(e) {
-  if (!dragMode || solved) return;
-  const r = +e.target.dataset.r, c = +e.target.dataset.c;
+function continueDrag(el) {
+  if (!dragMode || solved || !el) return;
+  const r = +el.dataset.r, c = +el.dataset.c;
   const parts = dragMode.split('_');
   const targetVal = parseInt(parts[parts.length - 1], 10);
   if (player[r][c] !== targetVal) applyTo(r, c, targetVal);
 }
 
-document.addEventListener('mouseup', () => {
+function endDrag() {
   if (dragMode) { saveProgress(); checkWin(); }
   dragMode = null;
+}
+
+// ── Mouse events ──
+function cellDown(e) {
+  if (solved) return;
+  e.preventDefault();
+  const el = e.currentTarget;
+  startDrag(el, e.button === 2);
+  checkWin();
+}
+
+// Use mousemove on the puzzle wrap instead of mouseenter on cells
+// This catches fast movement that skips cells
+document.addEventListener('mousemove', (e) => {
+  if (!dragMode || solved) return;
+  const el = cellFromPoint(e.clientX, e.clientY);
+  if (el) continueDrag(el);
 });
+
+document.addEventListener('mouseup', endDrag);
+
+function onContextMenu(e) { e.preventDefault(); }
+
+// ── Touch events ──
+function cellTouchStart(e) {
+  if (solved) return;
+  e.preventDefault(); // prevents scroll while drawing
+  const touch = e.touches[0];
+  const el = cellFromPoint(touch.clientX, touch.clientY);
+  if (!el) return;
+  startDrag(el, false);
+}
+
+function onTouchMove(e) {
+  if (!dragMode || solved) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const el = cellFromPoint(touch.clientX, touch.clientY);
+  if (el) continueDrag(el);
+}
+
+function onTouchEnd(e) {
+  endDrag();
+}
+
+// Attach touch listeners to puzzle wrap (set in render)
+function attachTouchListeners() {
+  const wrap = document.getElementById('puzzle-wrap');
+  if (!wrap) return;
+  wrap.addEventListener('touchstart', cellTouchStart, { passive: false });
+  wrap.addEventListener('touchmove',  onTouchMove,    { passive: false });
+  wrap.addEventListener('touchend',   onTouchEnd,     { passive: true });
+}
 
 function applyTo(r, c, val) {
   player[r][c] = val;
