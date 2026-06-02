@@ -283,10 +283,14 @@ main {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  /* Height matches one cell row */
-  height: var(--cell);
+  /* Must match cell height + border exactly */
+  height: calc(var(--cell) + 1px);
+  box-sizing: border-box;
 }
-.clue-h.clue-done { color: var(--gold); }
+.clue-h-spacer {
+  /* Height set by JS after render to match col-clue header exactly */
+  flex-shrink: 0;
+}
 .clue-v {
   width: var(--cell);
   text-align: center;
@@ -1037,11 +1041,12 @@ function loadProgress() {
   } catch(e){}
 }
 
-function markSolvedLocally() {
-  try { localStorage.setItem(lsKey('solved'), '1'); } catch(e){}
+function wasSolvedToday(size) {
+  const sz = size || currentSize;
+  try { return !!localStorage.getItem(`nonogram_solved_${sz}_${TODAY}`); } catch(e){ return false; }
 }
-function wasSolvedToday() {
-  try { return !!localStorage.getItem(lsKey('solved')); } catch(e){ return false; }
+function markSolvedLocally() {
+  try { localStorage.setItem(`nonogram_solved_${currentSize}_${TODAY}`, '1'); } catch(e){}
 }
 
 function getBestTime() {
@@ -1089,9 +1094,9 @@ function render() {
   /* ── Row clue sidebar (absolutely positioned left of cells) ── */
   const clueBar = document.createElement('div');
   clueBar.className = 'clue-h-wrap';
-  // Top spacer matching col-clue header height
+  // Top spacer — height is calculated after render via requestAnimationFrame
   const spacer = document.createElement('div');
-  spacer.style.height = (maxCC * 20 + 14) + 'px'; // approx col clue height
+  spacer.className = 'clue-h-spacer';
   clueBar.appendChild(spacer);
   for (let r = 0; r < R; r++) {
     const div = document.createElement('div');
@@ -1156,6 +1161,24 @@ function render() {
   outer.appendChild(gw);
 
   wrap.appendChild(outer);
+
+  // Measure and sync spacer height to the actual rendered col-clue row
+  requestAnimationFrame(() => {
+    // Measure the col-clue header row height precisely
+    const colClueRow = table.querySelector('tr:first-child');
+    const firstCellRow = table.querySelector('tr:nth-child(2)');
+    if (colClueRow && spacer) {
+      spacer.style.height = colClueRow.getBoundingClientRect().height + 'px';
+    }
+    // Also verify first cell row height matches clue-h height
+    if (firstCellRow) {
+      const rowH = firstCellRow.getBoundingClientRect().height;
+      clueBar.querySelectorAll('.clue-h').forEach(el => {
+        el.style.height = rowH + 'px';
+      });
+    }
+  });
+
   refreshAll();
 }
 
@@ -1271,17 +1294,27 @@ function checkWin() {
 
   setTimeout(() => {
     document.getElementById('win-time-display').textContent = fmtTime(timerSec);
-    // Reset form to visible first, then check if already submitted for THIS size
+    // Reset form
     document.getElementById('lb-form').style.display = 'block';
     document.getElementById('lb-submitted-msg').style.display = 'none';
     const submitBtn = document.getElementById('btn-submit-lb');
     submitBtn.disabled = false;
     submitBtn.textContent = 'Add to leaderboard';
-    // Now check if this specific size was already submitted today
     const submitted = localStorage.getItem(`nonogram_lb_submitted_${currentSize}_${TODAY}`);
     if (submitted) {
       document.getElementById('lb-form').style.display = 'none';
       document.getElementById('lb-submitted-msg').style.display = 'block';
+    }
+    // Update "Other size" button label
+    const sizes = [5, 10, 15, 20];
+    const nextSize = sizes.find(s => !wasSolvedToday(s) && s !== currentSize);
+    const closeBtn = document.getElementById('btn-close-win');
+    if (nextSize) {
+      closeBtn.textContent = `Try ${nextSize}×${nextSize}`;
+    } else {
+      closeBtn.textContent = 'All done today!';
+      closeBtn.disabled = true;
+      closeBtn.style.opacity = '.5';
     }
     document.getElementById('win-overlay').classList.add('show');
   }, 180);
@@ -1541,7 +1574,13 @@ document.getElementById('btn-share-win').addEventListener('click', function() {
 // Win overlay close
 document.getElementById('btn-close-win').addEventListener('click', () => {
   document.getElementById('win-overlay').classList.remove('show');
-  loadLeaderboard();
+  // Find smallest size not yet solved today
+  const sizes = [5, 10, 15, 20];
+  const nextSize = sizes.find(s => !wasSolvedToday(s) && s !== currentSize);
+  if (nextSize) {
+    initSize(nextSize);
+  }
+  // If all solved, nothing to do — user sees "Already solved today" message
 });
 
 // Leaderboard submit

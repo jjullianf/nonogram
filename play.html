@@ -199,21 +199,38 @@ main {
 /* ═══════════════════════════════════════════
    PUZZLE GRID
 ═══════════════════════════════════════════ */
-.puzzle-wrap { overflow-x: auto; max-width: 100%; margin-bottom: 10px; }
+.puzzle-wrap {
+  overflow-x: visible;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.grid-outer-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+}
+.clue-h-wrap { position: absolute; right: 100%; top: 0; display: flex; flex-direction: column; }
+.clue-h-spacer { flex-shrink: 0; }
 .nonogram-table { border-collapse: collapse; user-select: none; -webkit-user-select: none; }
-.grid-wrap { display: inline-block; padding: 12px; }
+.grid-wrap { display: inline-block; padding: 8px; }
 
 .clue-h {
   text-align: right;
-  padding: 4px 14px 4px 8px;
-  font-size: 13px;
+  padding-right: 10px;
+  font-size: 12px;
   color: var(--ink2);
-  vertical-align: middle;
   white-space: nowrap;
-  line-height: 1.6;
   letter-spacing: .02em;
   transition: color .15s;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: calc(var(--cell) + 1px);
+  box-sizing: border-box;
 }
+.clue-h.clue-done { color: var(--gold); }
 .clue-v {
   width: var(--cell);
   text-align: center;
@@ -696,16 +713,28 @@ function render() {
   wrap.innerHTML = '';
   if (!puzzle) return;
   const { R, C, rowClues, colClues } = puzzle;
-  const maxRC = Math.max(...rowClues.map(c => c.length));
   const maxCC = Math.max(...colClues.map(c => c.length));
+
+  /* Row clue sidebar */
+  const clueBar = document.createElement('div');
+  clueBar.className = 'clue-h-wrap';
+  const spacer = document.createElement('div');
+  spacer.className = 'clue-h-spacer';
+  clueBar.appendChild(spacer);
+  for (let r = 0; r < R; r++) {
+    const div = document.createElement('div');
+    div.className = 'clue-h';
+    div.id = `rh-${r}`;
+    div.textContent = rowClues[r].join('\u2009\u2009');
+    clueBar.appendChild(div);
+  }
+
+  /* Cell table */
   const table = document.createElement('table');
   table.className = 'nonogram-table';
   // Col clue row
   {
     const tr = document.createElement('tr');
-    const corner = document.createElement('td');
-    corner.className = 'clue-corner'; corner.colSpan = maxRC;
-    tr.appendChild(corner);
     for (let c = 0; c < C; c++) {
       const td = document.createElement('td');
       td.className = 'clue-v'; td.id = `cv-${c}`;
@@ -718,13 +747,9 @@ function render() {
     }
     table.appendChild(tr);
   }
-  // Game rows
+  // Game rows (no row clue column)
   for (let r = 0; r < R; r++) {
     const tr = document.createElement('tr');
-    const rclue = document.createElement('td');
-    rclue.className = 'clue-h'; rclue.id = `rh-${r}`; rclue.colSpan = maxRC;
-    rclue.textContent = rowClues[r].join('\u2009\u2009');
-    tr.appendChild(rclue);
     for (let c = 0; c < C; c++) {
       const td = document.createElement('td');
       td.className = 'cell'; td.dataset.r = r; td.dataset.c = c;
@@ -737,10 +762,32 @@ function render() {
     }
     table.appendChild(tr);
   }
+
   const gw = document.createElement('div');
   gw.className = 'grid-wrap';
   gw.appendChild(table);
-  wrap.appendChild(gw);
+
+  const outer = document.createElement('div');
+  outer.className = 'grid-outer-wrap';
+  outer.appendChild(clueBar);
+  outer.appendChild(gw);
+
+  wrap.appendChild(outer);
+
+  requestAnimationFrame(() => {
+    const colClueRow = table.querySelector('tr:first-child');
+    const firstCellRow = table.querySelector('tr:nth-child(2)');
+    if (colClueRow && spacer) {
+      spacer.style.height = colClueRow.getBoundingClientRect().height + 'px';
+    }
+    if (firstCellRow) {
+      const rowH = firstCellRow.getBoundingClientRect().height;
+      clueBar.querySelectorAll('.clue-h').forEach(el => {
+        el.style.height = rowH + 'px';
+      });
+    }
+  });
+
   refreshAll();
 }
 
