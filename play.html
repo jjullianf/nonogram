@@ -200,18 +200,34 @@ main {
    PUZZLE GRID
 ═══════════════════════════════════════════ */
 .puzzle-wrap {
-  overflow-x: visible;
+  overflow-x: auto;
+  overflow-y: visible;
   max-width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
 }
+@media (max-width: 600px) {
+  .puzzle-wrap {
+    justify-content: flex-start;
+    padding-left: 8px;
+  }
+}
 .grid-outer-wrap {
   position: relative;
   display: inline-flex;
   align-items: flex-start;
+  padding-left: 100px;
+  flex-shrink: 0;
 }
-.clue-h-wrap { position: absolute; right: 100%; top: 0; display: flex; flex-direction: column; }
+.clue-h-wrap {
+  position: absolute;
+  right: calc(100% - 100px);
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
 .clue-h-spacer { flex-shrink: 0; }
 .nonogram-table { border-collapse: collapse; user-select: none; -webkit-user-select: none; }
 .grid-wrap { display: inline-block; padding: 8px; }

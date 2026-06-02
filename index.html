@@ -240,36 +240,40 @@ main {
   margin-bottom: 10px;
 }
 .puzzle-wrap {
-  overflow-x: visible;
+  overflow-x: auto;
+  overflow-y: visible;
   max-width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
+  /* Add left padding on mobile so clues aren't clipped */
+  padding-left: max(0px, env(safe-area-inset-left));
 }
-/* Outer container — positions clues + cells together */
+/* On small screens, don't centre — left-align so clues are visible */
+@media (max-width: 600px) {
+  .puzzle-wrap {
+    justify-content: flex-start;
+    padding-left: 8px;
+  }
+}
 .grid-outer-wrap {
   position: relative;
   display: inline-flex;
   align-items: flex-start;
+  /* Reserve space for clues — 100px fits most row clues comfortably */
+  padding-left: 100px;
+  flex-shrink: 0;
 }
-/* Row clues sit to the left, absolutely so they don't affect centering */
 .clue-h-wrap {
   position: absolute;
-  right: 100%;
+  right: calc(100% - 100px);
   top: 0;
   display: flex;
   flex-direction: column;
+  /* Allow clues to be as wide as needed */
+  white-space: nowrap;
 }
-/* Cell-only table — this is what gets centered */
-.nonogram-table {
-  border-collapse: collapse;
-  user-select: none;
-  -webkit-user-select: none;
-}
-.grid-wrap {
-  display: inline-block;
-  padding: 8px;
-}
+.clue-h-spacer { flex-shrink: 0; }
 
 /* Clues */
 .clue-h {
