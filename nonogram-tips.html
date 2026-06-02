@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonogram Tips & Tricks — Solve Faster & Smarter</title>
+<meta name="description" content="Practical Nonogram and Picross tips to help you solve puzzles faster. Covers key techniques, common mistakes, and strategies for every difficulty level.">
+<meta name="keywords" content="nonogram tips, nonogram tipps, nonogram strategie, picross tipps, picross strategie, nonogram tricks, nonogram faster, picross tips, nonogram strategie tipps">
+<meta property="og:title" content="Nonogram Tips & Tricks — Solve Faster & Smarter">
+<meta property="og:description" content="Practical tips to solve Nonogram and Picross puzzles faster. Key techniques, common mistakes, and strategies explained simply.">
+<meta property="og:url" content="https://nonogram.ch/nonogram-tips.html">
+<link rel="canonical" href="https://nonogram.ch/nonogram-tips.html">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Nonogram Tips & Tricks — Solve Faster & Smarter",
+  "description": "Practical tips to solve Nonogram and Picross puzzles faster.",
+  "url": "https://nonogram.ch/nonogram-tips.html",
+  "publisher": { "@type": "Organization", "name": "nonogram.ch" }
+}
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-57MPL00XWG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-57MPL00XWG');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1a1a;--ink2:#3a3a3a;--ink3:#6a6a6a;--paper:#f8f6f1;--paper2:#edeae3;--paper3:#e0dcd3;--gold:#c9a84c;--gold2:#a8873a;--border:#c8c4bb;--r:3px;}
+@media(prefers-color-scheme:dark){:root{--ink:#f0ede6;--ink2:#c8c4bb;--ink3:#8a8880;--paper:#1a1916;--paper2:#222119;--paper3:#2c2b23;--border:#3a3830;}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Mono',monospace;background:var(--paper);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:52px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--paper);z-index:50;}
+.nav-logo{font-family:'DM Mono',monospace;font-size:13px;font-weight:400;color:var(--ink);text-decoration:none;letter-spacing:.06em;}
+.nav-links{display:flex;gap:20px;list-style:none;}
+.nav-links a{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);text-decoration:none;transition:color .12s;}
+.nav-links a:hover{color:var(--ink);}
+main{flex:1;display:flex;flex-direction:column;align-items:center;padding:48px 16px 80px;}
+.page-header{text-align:center;margin-bottom:48px;}
+.page-badge{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;}
+.page-header h1{font-family:'Noto Serif JP',serif;font-size:clamp(20px,4vw,28px);font-weight:400;letter-spacing:-.01em;margin-bottom:8px;}
+.page-header .sub{font-size:12px;color:var(--ink3);letter-spacing:.03em;}
+.content{width:100%;max-width:620px;}
+.section{margin-bottom:52px;}
+.section-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.section h2{font-family:'Noto Serif JP',serif;font-size:20px;font-weight:400;letter-spacing:-.01em;color:var(--ink);margin-bottom:14px;}
+.section h3{font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--ink);margin-bottom:8px;margin-top:24px;}
+.section p{font-size:13px;color:var(--ink2);line-height:1.9;margin-bottom:14px;}
+.section p:last-child{margin-bottom:0;}
+.section a{color:var(--gold);text-decoration:none;}
+.section a:hover{text-decoration:underline;}
+.section ul{padding-left:20px;margin-bottom:14px;}
+.section li{font-size:13px;color:var(--ink2);line-height:1.85;margin-bottom:8px;}
+.tip-card{border:1px solid var(--border);border-radius:4px;padding:18px 20px;margin-bottom:12px;background:var(--paper);}
+.tip-card:hover{background:var(--paper2);}
+.tip-number{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.tip-card h3{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:8px;margin-top:0;}
+.tip-card p{font-size:12px;color:var(--ink3);line-height:1.75;margin-bottom:0;}
+.callout{border-left:3px solid var(--gold);padding:12px 16px;margin:16px 0;background:var(--paper2);border-radius:0 4px 4px 0;}
+.callout p{font-size:12px;color:var(--ink3);margin-bottom:0;line-height:1.7;}
+.related-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+.related-link{display:block;padding:14px 16px;border:1px solid var(--border);border-radius:4px;text-decoration:none;color:var(--ink);transition:background .12s;}
+.related-link:hover{background:var(--paper2);}
+.related-link .rl-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px;}
+.related-link .rl-title{font-size:13px;color:var(--ink);}
+.cta-card{border:1px solid var(--border);border-radius:4px;padding:28px;text-align:center;}
+.cta-card p{font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:18px;}
+.cta-card .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.cta-card a{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:9px 20px;border:1.5px solid var(--border);background:var(--paper2);color:var(--ink);border-radius:var(--r);text-decoration:none;transition:all .12s;}
+.cta-card a:hover{background:var(--paper3);}
+.cta-card a.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.coffee-btn{position:fixed;bottom:20px;right:20px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;padding:8px 14px;background:var(--gold);border:1.5px solid var(--gold);border-radius:20px;color:var(--paper);text-decoration:none;transition:all .15s;z-index:40;}
+.coffee-btn:hover{background:var(--gold2);}
+footer{border-top:1px solid var(--border);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--ink3);letter-spacing:.04em;}
+footer a{color:var(--ink3);text-decoration:none;}
+footer a:hover{color:var(--ink);}
+.footer-links{display:flex;gap:16px;}
+@media(max-width:500px){nav{padding:0 16px;}.nav-links{gap:12px;}.related-links{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><img src="favicon.png" alt="" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;">nonogram.ch</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Daily</a></li>
+    <li><a href="play.html">Play</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <span class="page-badge">Tips & Tricks</span>
+    <h1>Nonogram Tips</h1>
+    <p class="sub">Practical advice to solve faster and make fewer mistakes</p>
+  </div>
+
+  <div class="content">
+
+    <div class="section">
+      <div class="section-label">Before you start</div>
+      <h2>The Right Mindset</h2>
+      <p>Nonograms reward patience over speed. The fastest solvers are not the ones who move quickest — they are the ones who extract the most information from each line before moving on. Every step should be a certainty, not a guess.</p>
+      <p>New to Nonograms? Read <a href="nonogram-rules.html">the rules first →</a> then come back here.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-label">10 tips</div>
+      <h2>Tips That Actually Help</h2>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 01</div>
+        <h3>Start with the largest clue groups</h3>
+        <p>Big groups relative to the line length give you the most overlap. A clue of 8 in a 10-cell line means 6 cells are certain. Always find these first — they anchor the rest of the puzzle.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 02</div>
+        <h3>Mark empty cells, not just filled ones</h3>
+        <p>Most beginners only mark filled cells. But confirmed empty cells (×) are just as valuable — they break lines into smaller segments that are easier to solve independently. Get in the habit of marking both.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 03</div>
+        <h3>Work in passes, not line by line</h3>
+        <p>Do one pass across all rows, then one pass down all columns. Each pass unlocks new information for the next. Solving a single line completely before moving on is slower than iterating across the whole grid.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 04</div>
+        <h3>Use the overlap formula</h3>
+        <p>For a clue of length k in a line of length n, the guaranteed overlap is 2k − n cells in the centre. If the result is positive, those cells are always filled. Calculate this mentally for every large clue.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 05</div>
+        <h3>Edge cells are powerful clues</h3>
+        <p>If a cell at the very start or end of a line is filled, it must belong to the first or last clue group. This immediately pins the position of that group and may confirm several more cells.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 06</div>
+        <h3>Close out completed groups immediately</h3>
+        <p>Once you have confirmed all cells of a clue group, mark the cells immediately before and after it as empty. This prevents the group from growing into adjacent unknowns in later passes.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 07</div>
+        <h3>Look for clue of 0 lines</h3>
+        <p>A line with clue 0 is entirely empty. Mark every cell in it immediately. These lines take one second and immediately give you information for the perpendicular lines.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 08</div>
+        <h3>Use Note mode for uncertain cells</h3>
+        <p>On nonogram.ch, Note mode adds a small dot pattern to a cell. Use it to mark cells you suspect are filled but haven't confirmed yet. It keeps your thinking visible without committing to a wrong answer.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 09</div>
+        <h3>Check gold clues for free information</h3>
+        <p>When a row or column clue turns gold, it is fully solved. Every cell in it is confirmed. Immediately use the confirmed empty cells in that line to constrain the perpendicular lines — this often breaks open a stuck puzzle.</p>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-number">Tip 10</div>
+        <h3>Never guess — if you are stuck, there is always a deduction available</h3>
+        <p>Every puzzle on nonogram.ch is verified to have a unique logical solution. If you feel stuck, take a step back and look at lines you have not analysed yet. The next move is always there.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Common mistakes</div>
+      <h2>What Not To Do</h2>
+      <ul>
+        <li><strong>Guessing.</strong> Filling a cell because it looks right leads to cascading errors that are hard to undo. Only fill cells you can prove.</li>
+        <li><strong>Ignoring small clue groups.</strong> A single isolated 1 at the edge of a line can pin the position of every other group. Never skip small clues.</li>
+        <li><strong>Solving rows only.</strong> Alternate between rows and columns — that is where all the progress comes from.</li>
+        <li><strong>Not closing out completed groups.</strong> Always mark the cells around a finished group as empty immediately.</li>
+        <li><strong>Forgetting clue order.</strong> Groups must appear in the listed order — left to right for rows, top to bottom for columns. You cannot rearrange them.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">By difficulty</div>
+      <h2>Tips for Each Size</h2>
+
+      <h3>5×5 — Starter</h3>
+      <p>Almost every cell can be solved in the first pass using overlap alone. If you are new, start here to build intuition before moving up.</p>
+
+      <h3>10×10 — Classic</h3>
+      <p>The sweet spot. Two or three passes are usually enough. Focus on the largest clue groups first, close out completed lines immediately, and the rest follows.</p>
+
+      <h3>15×15 — Hard</h3>
+      <p>More passes needed. Segment analysis becomes important — once you have some empty cells, each segment becomes an independent mini-puzzle. Treat them separately.</p>
+
+      <h3>20×20 — Expert</h3>
+      <p>Low clue density means more unknowns early on. Be methodical. Use Note mode liberally. The contradiction method (assuming a cell is one state, following consequences, reversing if you reach an impossibility) may be needed.</p>
+
+      <div class="callout">
+        <p>Want a full technical breakdown? <a href="guide.html">The complete strategy guide covers every technique in depth →</a></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">See also</div>
+      <h2>Related Pages</h2>
+      <div class="related-links">
+        <a class="related-link" href="nonogram-rules.html">
+          <div class="rl-label">Basics</div>
+          <div class="rl-title">Nonogram Rules →</div>
+        </a>
+        <a class="related-link" href="guide.html">
+          <div class="rl-label">Full Guide</div>
+          <div class="rl-title">Complete Strategy Guide →</div>
+        </a>
+        <a class="related-link" href="nonogram-vs-sudoku.html">
+          <div class="rl-label">Comparison</div>
+          <div class="rl-title">Nonogram vs Sudoku →</div>
+        </a>
+        <a class="related-link" href="nonogram-vs-picross.html">
+          <div class="rl-label">Comparison</div>
+          <div class="rl-title">Nonogram vs Picross →</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="cta-card">
+      <p>Put the tips into practice — a new free puzzle every day.</p>
+      <div class="btn-row">
+        <a class="primary" href="index.html">Play today's puzzle</a>
+        <a href="play.html">Unlimited play</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<a class="coffee-btn" href="https://buymeacoffee.com/juulian" target="_blank" rel="noopener">☕ Support</a>
+<footer>
+  <span>© 2026 nonogram.ch</span>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="about.html#privacy">Privacy</a>
+    <a href="nonogram-vs-picross.html">Nonogram vs Picross</a>
+    <a href="guide.html">Strategy Guide</a>
+  </div>
+</footer>
+<script>
+(function() {
+  const btn = document.querySelector('.coffee-btn');
+  const footer = document.querySelector('footer');
+  function reposition() {
+    if (!footer || !btn) return;
+    const footerTop = footer.getBoundingClientRect().top;
+    const viewH = window.innerHeight;
+    btn.style.bottom = footerTop < viewH ? (viewH - footerTop + 20) + 'px' : '20px';
+  }
+  window.addEventListener('scroll', reposition, {passive:true});
+  window.addEventListener('resize', reposition);
+  reposition();
+})();
+</script>
+</body>
+</html>
