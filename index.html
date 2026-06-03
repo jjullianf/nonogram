@@ -246,39 +246,34 @@ main {
 }
 .puzzle-wrap {
   overflow-x: auto;
-  overflow-y: visible;
   max-width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
-  /* Add left padding on mobile so clues aren't clipped */
-  padding-left: max(0px, env(safe-area-inset-left));
-}
-/* On small screens, don't centre — left-align so clues are visible */
-@media (max-width: 600px) {
-  .puzzle-wrap {
-    justify-content: flex-start;
-    padding-left: 8px;
-  }
 }
 .grid-outer-wrap {
   position: relative;
-  display: inline-flex;
-  align-items: flex-start;
-  /* Reserve space for clues — 100px fits most row clues comfortably */
-  padding-left: 100px;
-  flex-shrink: 0;
+  display: inline-block;
+  /* Centering: the cell table is centred; clues overflow left via negative margin */
 }
+/* Clue sidebar floats left without affecting layout width */
 .clue-h-wrap {
   position: absolute;
-  right: calc(100% - 100px);
+  right: 100%;
   top: 0;
   display: flex;
   flex-direction: column;
-  /* Allow clues to be as wide as needed */
   white-space: nowrap;
+  padding-right: 8px;
 }
 .clue-h-spacer { flex-shrink: 0; }
+/* Cell table — this is what gets centred */
+.nonogram-table {
+  border-collapse: collapse;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.grid-wrap { display: inline-block; padding: 8px; }
 
 /* Clues */
 .clue-h {
@@ -644,9 +639,20 @@ footer a { color: var(--ink3); text-decoration: none; }
 footer a:hover { color: var(--ink); }
 .footer-links { display: flex; gap: 16px; }
 
-/* ═══════════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  :root {
+    /* Cell size: viewport minus left padding for clues (90px) minus right padding (16px) divided by 10 columns */
+    --cell: clamp(22px, calc((100vw - 106px) / 10), 34px);
+  }
+  /* Give clues room on the left by padding the scroll container */
+  .puzzle-wrap {
+    justify-content: flex-start;
+    padding-left: 90px;
+    box-sizing: border-box;
+  }
+  .clue-h { font-size: 11px; }
+  .clue-v { font-size: 11px; }
+}
 @media (max-width: 500px) {
   nav { padding: 0 16px; }
   .nav-links { gap: 10px; }
@@ -656,8 +662,6 @@ footer a:hover { color: var(--ink); }
   .lb-form-fields { flex-direction: column; align-items: center; }
   .lb-form input[type="text"], .lb-form select { width: 100%; max-width: 240px; }
   .mode-btn { min-width: 42px; padding: 6px 8px; }
-  .clue-h { font-size: 11px; padding: 4px 6px 4px 2px; }
-  .clue-v { font-size: 11px; }
 }
 </style>
 </head>
@@ -1306,29 +1310,30 @@ function onContextMenu(e) { e.preventDefault(); }
 // ── Touch events ──
 function cellTouchStart(e) {
   if (solved) return;
-  e.preventDefault(); // prevents scroll while drawing
   const touch = e.touches[0];
   const el = cellFromPoint(touch.clientX, touch.clientY);
-  if (!el) return;
+  if (!el) return; // not on a cell — allow normal scroll
+  e.preventDefault(); // on a cell — prevent scroll and start drawing
   startDrag(el, false);
 }
 
 function onTouchMove(e) {
   if (!dragMode || solved) return;
-  e.preventDefault();
+  e.preventDefault(); // prevent scroll only while actively drawing
   const touch = e.touches[0];
   const el = cellFromPoint(touch.clientX, touch.clientY);
   if (el) continueDrag(el);
 }
 
-function onTouchEnd(e) {
-  endDrag();
-}
+function onTouchEnd() { endDrag(); }
 
-// Attach touch listeners to puzzle wrap (set in render)
 function attachTouchListeners() {
   const wrap = document.getElementById('puzzle-wrap');
   if (!wrap) return;
+  // Clone node to remove any old listeners before re-attaching
+  wrap.removeEventListener('touchstart', cellTouchStart);
+  wrap.removeEventListener('touchmove',  onTouchMove);
+  wrap.removeEventListener('touchend',   onTouchEnd);
   wrap.addEventListener('touchstart', cellTouchStart, { passive: false });
   wrap.addEventListener('touchmove',  onTouchMove,    { passive: false });
   wrap.addEventListener('touchend',   onTouchEnd,     { passive: true });

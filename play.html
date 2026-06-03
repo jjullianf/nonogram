@@ -42,8 +42,10 @@
   --r:      3px;
 }
 @media (max-width: 600px) {
-  :root { --cell: clamp(22px, calc((100vw - 116px) / 10), 34px); }
-  .puzzle-wrap { justify-content: flex-start; padding-left: 8px; }
+  :root { --cell: clamp(22px, calc((100vw - 106px) / 10), 34px); }
+  .puzzle-wrap { justify-content: flex-start; padding-left: 90px; box-sizing: border-box; }
+  .clue-h { font-size: 11px; }
+  .clue-v { font-size: 11px; }
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -202,34 +204,27 @@ main {
 ═══════════════════════════════════════════ */
 .puzzle-wrap {
   overflow-x: auto;
-  overflow-y: visible;
   max-width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
 }
-@media (max-width: 600px) {
-  .puzzle-wrap {
-    justify-content: flex-start;
-    padding-left: 8px;
-  }
-}
 .grid-outer-wrap {
   position: relative;
-  display: inline-flex;
-  align-items: flex-start;
-  padding-left: 100px;
-  flex-shrink: 0;
+  display: inline-block;
 }
 .clue-h-wrap {
   position: absolute;
-  right: calc(100% - 100px);
+  right: 100%;
   top: 0;
   display: flex;
   flex-direction: column;
   white-space: nowrap;
+  padding-right: 8px;
 }
 .clue-h-spacer { flex-shrink: 0; }
+.nonogram-table { border-collapse: collapse; user-select: none; -webkit-user-select: none; }
+.grid-wrap { display: inline-block; padding: 8px; }
 .nonogram-table { border-collapse: collapse; user-select: none; -webkit-user-select: none; }
 .grid-wrap { display: inline-block; padding: 8px; }
 
@@ -895,10 +890,11 @@ function onContextMenu(e) { e.preventDefault(); }
 
 function cellTouchStart(e) {
   if (solved) return;
-  e.preventDefault();
   const touch = e.touches[0];
   const el = cellFromPoint(touch.clientX, touch.clientY);
-  if (el) startDrag(el, false);
+  if (!el) return; // not on a cell — allow normal scroll
+  e.preventDefault();
+  startDrag(el, false);
 }
 function onTouchMove(e) {
   if (!dragMode || solved) return;
@@ -912,6 +908,9 @@ function onTouchEnd() { endDrag(); }
 function attachTouchListeners() {
   const wrap = document.getElementById('puzzle-wrap');
   if (!wrap) return;
+  wrap.removeEventListener('touchstart', cellTouchStart);
+  wrap.removeEventListener('touchmove',  onTouchMove);
+  wrap.removeEventListener('touchend',   onTouchEnd);
   wrap.addEventListener('touchstart', cellTouchStart, { passive: false });
   wrap.addEventListener('touchmove',  onTouchMove,    { passive: false });
   wrap.addEventListener('touchend',   onTouchEnd,     { passive: true });
