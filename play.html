@@ -984,9 +984,44 @@ function renderBests() {
 /* ═══════════════════════════════════════════
    GENERATE
 ═══════════════════════════════════════════ */
+function setCellSize(size) {
+  if (window.innerWidth > 600) {
+    document.documentElement.style.setProperty('--cell', '40px');
+    return;
+  }
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const clueW = 60, sidePad = 16;
+  const cellFromWidth = Math.floor((vw - clueW - sidePad) / size);
+
+  const nav      = document.querySelector('nav');
+  const header   = document.querySelector('.page-header');
+  const tabs     = document.querySelector('.size-tabs');
+  const stats    = document.querySelector('.stats-row');
+  const hint     = document.getElementById('hint');
+  const toolbar  = document.querySelector('.mode-toolbar');
+  const controls = document.querySelector('.game-controls');
+
+  const navH      = nav      ? nav.getBoundingClientRect().height      : 52;
+  const headerH   = header   ? header.getBoundingClientRect().height   : 0;
+  const tabsH     = tabs     ? tabs.getBoundingClientRect().height     : 0;
+  const statsH    = stats    ? stats.getBoundingClientRect().height    : 0;
+  const hintH     = hint     ? hint.getBoundingClientRect().height     : 0;
+  const toolbarH  = toolbar  ? toolbar.getBoundingClientRect().height  : 0;
+  const controlsH = controls ? controls.getBoundingClientRect().height : 0;
+  const colClueH  = size <= 5 ? 24 : size <= 10 ? 36 : 48;
+  const margins   = 48;
+
+  const usedH = navH + headerH + tabsH + statsH + hintH + toolbarH + controlsH + colClueH + margins;
+  const cellFromHeight = Math.floor((vh - usedH) / size);
+
+  const cell = Math.min(Math.max(cellFromWidth, 18), Math.max(cellFromHeight, 18), 40);
+  document.documentElement.style.setProperty('--cell', cell + 'px');
+}
+
 function newPuzzle(size) {
   currentSize = size;
-  currentSeed = (currentSeed + 7919) & 0xFFFFFFF; // advance seed each time
+  currentSeed = (currentSeed + 7919) & 0xFFFFFFF;
   solved = false;
   resetTimer();
   mode = 'fill';
@@ -998,6 +1033,7 @@ function newPuzzle(size) {
   setTimeout(() => {
     puzzle = generatePuzzle(size, size, currentSeed);
     player = Array.from({length: size}, () => new Array(size).fill(0));
+    setCellSize(size);
     render();
     updateStatDisplay();
     document.getElementById('hint').textContent = 'Click: fill  ·  Click again: ×  ·  Right-click: × directly';
@@ -1065,6 +1101,10 @@ document.getElementById('btn-close-win').addEventListener('click', () => {
    INIT
 ═══════════════════════════════════════════ */
 newPuzzle(10);
+
+window.addEventListener('resize', () => {
+  if (puzzle) { setCellSize(currentSize); render(); }
+});
 </script>
 
 <script>

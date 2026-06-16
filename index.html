@@ -1532,6 +1532,65 @@ function populateCountries() {
 /* ═══════════════════════════════════════════
    INIT PUZZLE FOR A SIZE
 ═══════════════════════════════════════════ */
+
+/**
+ * Calculate and set the cell size so the entire puzzle
+ * (clues + cells) fits on screen without scrolling on mobile.
+ * On desktop keeps the 40px default.
+ */
+function setCellSize(size) {
+  if (window.innerWidth > 600) {
+    document.documentElement.style.setProperty('--cell', '40px');
+    return;
+  }
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // ── Width constraint ──
+  // Row clues max width: longest clue * ~7px per char + 8px padding
+  // For a 10×10, worst case is "1 1 1 1" = ~50px
+  // Use 60px as safe estimate for clue column width
+  const clueW = 60;
+  const sidePad = 16;
+  const cellFromWidth = Math.floor((vw - clueW - sidePad) / size);
+
+  // ── Height constraint ──
+  // Measure actual heights of non-puzzle elements
+  const nav = document.querySelector('nav');
+  const header = document.querySelector('.page-header');
+  const tabs = document.querySelector('.size-tabs');
+  const stats = document.querySelector('.stats-row');
+  const hint = document.getElementById('hint');
+  const toolbar = document.querySelector('.mode-toolbar');
+  const controls = document.querySelector('.game-controls');
+
+  const navH     = nav     ? nav.getBoundingClientRect().height     : 52;
+  const headerH  = header  ? header.getBoundingClientRect().height  : 0;
+  const tabsH    = tabs    ? tabs.getBoundingClientRect().height    : 0;
+  const statsH   = stats   ? stats.getBoundingClientRect().height   : 0;
+  const hintH    = hint    ? hint.getBoundingClientRect().height    : 0;
+  const toolbarH = toolbar ? toolbar.getBoundingClientRect().height : 0;
+  const controlsH= controls? controls.getBoundingClientRect().height: 0;
+
+  // Extra: col-clue header (~3 lines × 12px × font ratio + padding ≈ 40px)
+  const colClueH = Math.ceil(size === 5 ? 24 : size <= 10 ? 36 : 48);
+  // Margins and padding between elements
+  const margins = 48;
+
+  const usedH = navH + headerH + tabsH + statsH + hintH + toolbarH + controlsH + colClueH + margins;
+  const availH = vh - usedH;
+  const cellFromHeight = Math.floor(availH / size);
+
+  // Take minimum, clamp between 18px and 40px
+  const cell = Math.min(
+    Math.max(cellFromWidth, 18),
+    Math.max(cellFromHeight, 18),
+    40
+  );
+
+  document.documentElement.style.setProperty('--cell', cell + 'px');
+}
 function initSize(size) {
   currentSize = size;
 
@@ -1580,6 +1639,8 @@ function initSize(size) {
     document.getElementById('hint').textContent = 'Click: fill  ·  Click again: ×  ·  Right-click: × directly';
   }
 
+  // Calculate cell size to fit puzzle on screen before rendering
+  setCellSize(size);
   render();
   updateStatDisplay();
   loadLeaderboard();
@@ -1700,6 +1761,14 @@ setInterval(updateCountdown, 1000);
 ═══════════════════════════════════════════ */
 populateCountries();
 initSize(10);
+
+// Recalculate on orientation change / resize
+window.addEventListener('resize', () => {
+  if (puzzle) {
+    setCellSize(currentSize);
+    render();
+  }
+});
 </script>
 
 <script>
