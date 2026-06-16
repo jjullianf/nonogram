@@ -39,12 +39,18 @@
   --gold2:  #a8873a;
   --border: #c8c4bb;
   --cell:   40px;
+  --clue-font: 12px;
+  --clue-gap:  2px;
+  --clue-pad:  6px 0 8px;
   --r:      3px;
 }
 @media (max-width: 600px) {
-  :root { --cell: clamp(22px, calc((100vw - 96px) / 10), 34px); }
-  .clue-h { font-size: 11px; }
-  .clue-v { font-size: 11px; }
+  :root {
+    --clue-font: 10px;
+    --clue-gap:  0px;
+    --clue-pad:  3px 0 4px;
+    --cell: clamp(20px, calc((100vw - 68px) / 10), 32px);
+  }
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -220,17 +226,15 @@ main {
 }
 .clue-h-spacer { flex-shrink: 0; }
 .nonogram-table { border-collapse: collapse; user-select: none; -webkit-user-select: none; }
-.grid-wrap { display: inline-block; padding: 8px; }
-.nonogram-table { border-collapse: collapse; user-select: none; -webkit-user-select: none; }
-.grid-wrap { display: inline-block; padding: 8px; }
+.grid-wrap { display: inline-block; padding: 6px; }
 
 .clue-h {
   text-align: right;
-  padding-right: 10px;
-  font-size: 12px;
+  padding-right: 8px;
+  font-size: var(--clue-font);
   color: var(--ink2);
   white-space: nowrap;
-  letter-spacing: .02em;
+  letter-spacing: .01em;
   transition: color .15s;
   display: flex;
   align-items: center;
@@ -242,15 +246,15 @@ main {
 .clue-v {
   width: var(--cell);
   text-align: center;
-  font-size: 13px;
+  font-size: var(--clue-font);
   color: var(--ink2);
   vertical-align: bottom;
-  padding: 6px 0 8px;
+  padding: var(--clue-pad);
   transition: color .15s;
 }
-.clue-v-inner { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.clue-v-digit { display: block; width: 100%; text-align: center; line-height: 1.55; letter-spacing: .02em; }
-.clue-corner { min-width: 24px; }
+.clue-v-inner { display: flex; flex-direction: column; align-items: center; gap: var(--clue-gap); }
+.clue-v-digit { display: block; width: 100%; text-align: center; line-height: 1.2; letter-spacing: .01em; }
+.clue-corner { min-width: 4px; }
 .clue-done { color: var(--gold) !important; }
 
 .cell {
@@ -433,10 +437,17 @@ footer a:hover { color: var(--ink); }
    RESPONSIVE
 ═══════════════════════════════════════════ */
 @media (max-width: 500px) {
-  :root { --cell: 30px; }
   nav { padding: 0 16px; }
   .nav-links { gap: 12px; }
   .stats-row { gap: 18px; }
+  .page-header { margin-bottom: 10px; }
+  .size-tabs { margin-bottom: 10px; }
+  .stats-row { margin-bottom: 8px; }
+  #hint { margin-bottom: 6px; font-size: 10px; }
+  .mode-toolbar { margin-bottom: 10px; gap: 4px; }
+  .game-controls { margin-bottom: 6px; }
+  .mode-label { font-size: 8px; }
+  .mode-btn { min-width: 42px; padding: 6px 8px; }
 }
 </style>
 </head>

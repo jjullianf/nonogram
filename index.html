@@ -51,22 +51,10 @@
   --gold2:  #a8873a;
   --border: #c8c4bb;
   --cell:   40px;
+  --clue-font: 12px;
+  --clue-gap:  2px;
+  --clue-pad:  6px 0 8px;
   --r:      3px;
-}
-@media (max-width: 600px) {
-  :root {
-    /* 
-      Fit 10 cells + ~100px clues + 16px padding in viewport.
-      (vw - 116px) / 10 — clamped so it never gets tiny or too big.
-    */
-    --cell: clamp(22px, calc((100vw - 116px) / 10), 34px);
-  }
-  .puzzle-wrap {
-  overflow-x: auto;
-  max-width: 100%;
-  text-align: center;
-  margin-bottom: 10px;
-}
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -77,6 +65,29 @@
     --paper2: #222119;
     --paper3: #2c2b23;
     --border: #3a3830;
+  }
+}
+/*
+  MOBILE SIZING STRATEGY
+  On a 390px iPhone with a 10×10 puzzle:
+  - Row clue area: ~52px (4 digits × 10px font + padding)
+  - Side padding: 16px
+  - Available for cells: 390 - 52 - 16 = 322px → 32px per cell
+
+  Height budget (10×10):
+  - Nav: 52px, stats: 50px, hint: 20px, col clues: ~60px,
+    toolbar: 70px, controls: 40px, bottom: 10px
+  - Total non-grid: ~302px → available: 100dvh - 302px → ~40px per row
+  
+  We take min(width-based, height-based) to guarantee square cells.
+*/
+@media (max-width: 600px) {
+  :root {
+    --clue-font: 10px;
+    --clue-gap:  0px;
+    --clue-pad:  3px 0 4px;
+    /* Width-based: (viewport - clue col ~52px - padding 16px) / 10 */
+    --cell: clamp(20px, calc((100vw - 68px) / 10), 32px);
   }
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -265,51 +276,52 @@ main {
   flex-shrink: 0;
 }
 .clue-h-spacer { flex-shrink: 0; }
-/* Cell table — this is what gets centred */
+/* Cell table — centred */
 .nonogram-table {
   border-collapse: collapse;
   user-select: none;
   -webkit-user-select: none;
 }
-.grid-wrap { display: inline-block; padding: 8px; }
-
+.grid-wrap { display: inline-block; padding: 6px; }
 /* Clues */
 .clue-h {
   text-align: right;
-  padding-right: 10px;
-  font-size: 12px;
+  padding-right: 8px;
+  font-size: var(--clue-font);
   color: var(--ink2);
   white-space: nowrap;
-  letter-spacing: .02em;
+  letter-spacing: .01em;
   transition: color .15s;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  /* Must match cell height + border exactly */
   height: calc(var(--cell) + 1px);
   box-sizing: border-box;
 }
-.clue-h-spacer {
-  /* Height set by JS after render to match col-clue header exactly */
-  flex-shrink: 0;
-}
+.clue-h-spacer { flex-shrink: 0; }
 .clue-v {
   width: var(--cell);
   text-align: center;
-  font-size: 13px;
+  font-size: var(--clue-font);
   color: var(--ink2);
   vertical-align: bottom;
-  padding: 6px 0 8px;
+  padding: var(--clue-pad);
   transition: color .15s;
 }
 .clue-v-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: var(--clue-gap);
 }
-.clue-v-digit { display: block; width: 100%; text-align: center; line-height: 1.55; letter-spacing: .02em; }
-.clue-corner { min-width: 24px; }
+.clue-v-digit {
+  display: block;
+  width: 100%;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: .01em;
+}
+.clue-corner { min-width: 4px; }
 .clue-done { color: var(--gold) !important; }
 
 /* Cells */
@@ -654,6 +666,14 @@ footer a:hover { color: var(--ink); }
   .lb-form-fields { flex-direction: column; align-items: center; }
   .lb-form input[type="text"], .lb-form select { width: 100%; max-width: 240px; }
   .mode-btn { min-width: 42px; padding: 6px 8px; }
+  /* Tighten spacing on mobile to give more room to puzzle */
+  .page-header { margin-bottom: 12px; }
+  .size-tabs { margin-bottom: 10px; }
+  .stats-row { margin-bottom: 8px; }
+  #hint { margin-bottom: 6px; font-size: 10px; }
+  .mode-toolbar { margin-bottom: 10px; gap: 4px; }
+  .game-controls { margin-bottom: 6px; }
+  .mode-label { font-size: 8px; }
 }
 </style>
 </head>
@@ -794,9 +814,8 @@ footer a:hover { color: var(--ink); }
       with at least one empty cell between each group.
     </p>
     <p>
-      <strong>Click</strong> to fill a cell · <strong>Click again</strong> to mark it empty (×) ·
-      <strong>Right-click</strong> to mark directly · <strong>Drag</strong> to paint multiple cells.
-      Use <em>Note</em> mode to pencil in uncertain cells.
+      <strong>Click: fill · Click again: × · Right-click: × directly</strong><br>
+      Drag to paint multiple cells. Use <em>Note</em> mode to pencil in uncertain cells.
     </p>
     <p>
       A new puzzle is available every day at midnight. Come back tomorrow!
