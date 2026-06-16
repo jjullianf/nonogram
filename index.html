@@ -649,14 +649,6 @@ footer a { color: var(--ink3); text-decoration: none; }
 footer a:hover { color: var(--ink); }
 .footer-links { display: flex; gap: 16px; }
 
-@media (max-width: 600px) {
-  :root {
-    /* Full width divided by 10 cells + clues (~80px) + padding (16px) */
-    --cell: clamp(22px, calc((100vw - 96px) / 10), 34px);
-  }
-  .clue-h { font-size: 11px; }
-  .clue-v { font-size: 11px; }
-}
 @media (max-width: 500px) {
   nav { padding: 0 16px; }
   .nav-links { gap: 10px; }
@@ -666,7 +658,6 @@ footer a:hover { color: var(--ink); }
   .lb-form-fields { flex-direction: column; align-items: center; }
   .lb-form input[type="text"], .lb-form select { width: 100%; max-width: 240px; }
   .mode-btn { min-width: 42px; padding: 6px 8px; }
-  /* Tighten spacing on mobile to give more room to puzzle */
   .page-header { margin-bottom: 12px; }
   .size-tabs { margin-bottom: 10px; }
   .stats-row { margin-bottom: 8px; }
